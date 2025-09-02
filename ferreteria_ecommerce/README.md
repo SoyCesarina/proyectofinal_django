@@ -1,10 +1,10 @@
-# 🛠️ Ferretería E-commerce - Sistema de Gestión Completo
+# Ferretería E-commerce - Sistema de Gestión Completo
 
-## 📋 Descripción del Proyecto
+## Descripción del Proyecto
 
-Sistema de e-commerce completo para ferretería desarrollado en Django 5.2.5, que incluye gestión de catálogo, carrito de compras, órdenes, inventario y promociones. El proyecto está diseñado para manejar productos con variantes, control de stock, cupones de descuento y gestión de envíos.
+Sistema de e-commerce completo para ferretería desarrollado en Django que incluye todos los puntos del proyecto que esta en la documentacion con: gestión de catálogo, carrito de compras, órdenes, inventario y promociones. El proyecto está diseñado para manejar productos con variantes, control de stock, cupones de descuento y gestión de envíos.
 
-## 🚀 Características Principales
+## Características Principales
 
 - **Catálogo de Productos**: Gestión completa de productos con categorías jerárquicas
 - **Sistema de Variantes**: Productos con diferentes opciones (color, tamaño, etc.)
@@ -15,7 +15,7 @@ Sistema de e-commerce completo para ferretería desarrollado en Django 5.2.5, qu
 - **Panel de Administración**: Interfaz Django Admin personalizada
 - **Responsive Design**: Interfaz adaptativa para diferentes dispositivos
 
-## 🏗️ Arquitectura del Sistema
+## Arquitectura del Sistema
 
 ### Aplicaciones Django
 
@@ -35,7 +35,7 @@ Sistema de e-commerce completo para ferretería desarrollado en Django 5.2.5, qu
 - **InventoryMovement**: Movimientos de inventario
 - **Coupon**: Cupones de descuento
 
-## 🛠️ Requisitos del Sistema
+## Requisitos del Sistema
 
 ### Software Requerido
 
@@ -56,35 +56,18 @@ gunicorn==21.2.0
 whitenoise==6.6.0
 ```
 
-## 📦 Instalación y Configuración
+## Instalación y Configuración
 
-### 1. Clonar el Repositorio
-
-```bash
-git clone <url-del-repositorio>
-cd ferreteria_ecommerce
-```
-
-### 2. Crear Entorno Virtual
-
-```bash
-# Windows
-python -m venv entornovirtual
-entornovirtual\Scripts\activate
-
-# Linux/Mac
-python3 -m venv entornovirtual
-source entornovirtual/bin/activate
-```
+Se descarga el proyecto (clonar el repositorio) y luego se crea un entorno virtual para trabajar de forma aislada con las librerías necesarias, evitando afectar el sistema principal.
 
 ### 3. Instalar Dependencias
 
-```bash
-pip install -r requirements.txt
-```
+se instalo todas las dependencias necesarias.
+
 
 ### 4. Configurar Base de Datos PostgreSQL
 
+se configuro la base de datos PostgreSQL. 
 ```sql
 -- Crear base de datos
 CREATE DATABASE django2proyecto;
@@ -96,7 +79,7 @@ GRANT ALL PRIVILEGES ON DATABASE django2proyecto TO postgres;
 
 ### 5. Configurar Variables de Entorno
 
-Crear archivo `.env` en la raíz del proyecto:
+Se creo el archivo `.env` en la raíz de mi proyecto:
 
 ```env
 DEBUG=True
@@ -109,6 +92,10 @@ DATABASE_PORT=5432
 ```
 
 ### 6. Ejecutar Migraciones
+
+
+hice algunas migraciones:
+
 
 ```bash
 python manage.py makemigrations
@@ -133,9 +120,9 @@ python manage.py loaddata base.sql
 python manage.py runserver
 ```
 
-El proyecto estará disponible en: http://127.0.0.1:8000/
+El proyecto esta disponible en: http://127.0.0.1:8000/  y en git 
 
-## 🔧 Configuración de Desarrollo
+## Configuración de Desarrollo
 
 ### Configuración de Base de Datos
 
@@ -174,7 +161,7 @@ USE_I18N = True
 USE_TZ = False
 ```
 
-## 🗂️ Estructura del Proyecto
+## Estructura del Proyecto
 
 ```
 ferreteria_ecommerce/
@@ -217,7 +204,7 @@ ferreteria_ecommerce/
 └── manage.py               # Script de gestión de Django
 ```
 
-## 🎯 Decisiones Técnicas
+## Decisiones Técnicas
 
 ### 1. Base de Datos
 
@@ -279,7 +266,7 @@ ferreteria_ecommerce/
 - Montos mínimos de compra
 - Descuentos máximos
 
-## 🚀 Despliegue en Producción
+## Despliegue en Producción
 
 ### Configuración de Producción
 
@@ -302,7 +289,7 @@ gunicorn ferreteria_ecommerce.wsgi:application
 python manage.py runserver 0.0.0.0:8000
 ```
 
-## 🧪 Testing
+## Testing
 
 ### Ejecutar Tests
 
@@ -316,7 +303,7 @@ python manage.py test cart
 python manage.py test orders
 ```
 
-## 📊 Comandos de Gestión Personalizados
+## Comandos de Gestión Personalizados
 
 El proyecto incluye comandos de gestión personalizados para tareas administrativas:
 
@@ -328,7 +315,7 @@ python manage.py help
 python manage.py [nombre_del_comando]
 ```
 
-## 🔒 Seguridad
+## Seguridad
 
 ### Consideraciones de Seguridad
 
@@ -343,7 +330,7 @@ python manage.py [nombre_del_comando]
 - **Database Credentials**: Usar variables de entorno
 - **Debug Mode**: Deshabilitar en producción
 
-## 📈 Monitoreo y Logs
+## Monitoreo y Logs
 
 ### Logs de Django
 
@@ -359,7 +346,7 @@ Los logs se configuran en `settings.py` y pueden incluir:
 - Errores 4xx y 5xx
 - Uso de memoria y CPU
 
-## 🤝 Contribución
+## Contribución
 
 ### Estándares de Código
 
@@ -376,7 +363,7 @@ Los logs se configuran en `settings.py` y pueden incluir:
 4. Crear pull request
 5. Revisión de código
 
-## 📞 Soporte
+## Soporte
 
 ### Contacto
 
@@ -391,10 +378,10 @@ Para soporte técnico o preguntas sobre el proyecto:
 - [PostgreSQL Documentation](https://www.postgresql.org/docs/)
 - [Django Admin Documentation](https://docs.djangoproject.com/en/stable/ref/contrib/admin/)
 
-## 📄 Licencia
+## Licencia
 
 Este proyecto está bajo la licencia [especificar licencia].
 
 ---
 
-**Desarrollado con ❤️ usando Django 5.2.5**
+**Desarrollado usando Django 5.2.5**
