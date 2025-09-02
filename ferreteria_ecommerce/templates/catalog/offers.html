@@ -1,0 +1,329 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Ofertas Destacadas - Ferretodo{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/product_list.css' %}">
+{% if current_category %}
+    <!-- Cuando se selecciona una categoría específica, usar el diseño de product_list -->
+    <style>
+        .product-card {
+            border: 1px solid #e5e7eb;
+            border-radius: 0.75rem;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            background: white;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+            border-color: #d1d5db;
+        }
+        
+        .product-image {
+            position: relative;
+            height: 200px;
+            overflow: hidden;
+            background: #f9fafb;
+        }
+        
+        .product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+        
+        .product-card:hover .product-image img {
+            transform: scale(1.05);
+        }
+        
+        .product-info {
+            padding: 1rem;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .product-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 0.5rem;
+            line-height: 1.4;
+        }
+        
+        .product-description {
+            color: #6b7280;
+            font-size: 0.875rem;
+            margin-bottom: 0.5rem;
+            flex: 1;
+        }
+        
+        .product-category {
+            color: #9ca3af;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.5rem;
+        }
+        
+        .product-price {
+            margin: 0.5rem 0;
+        }
+        
+        .product-stock {
+            margin: 0.5rem 0;
+        }
+        
+        .product-actions {
+            margin-top: auto;
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .btn-view-details {
+            flex: 1;
+            padding: 0.5rem;
+            font-size: 0.8rem;
+            border-radius: 0.5rem;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            border: 2px solid;
+            background: white;
+            color: #1f2937;
+            border-color: #1f2937;
+        }
+        
+        .btn-view-details:hover {
+            background: #1f2937;
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        .btn-out-of-stock {
+            flex: 1;
+            padding: 0.5rem;
+            font-size: 0.8rem;
+            border-radius: 0.5rem;
+            background: #9ca3af;
+            color: white;
+            border: none;
+            cursor: not-allowed;
+        }
+        
+        .discount-badge-inline {
+            background: #22c55e;
+            color: white;
+            padding: 0.3rem 0.6rem;
+            border-radius: 15px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 2px 8px rgba(34, 197, 94, 0.4);
+            animation: pulse 2s infinite;
+        }
+        
+        .featured-badge {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: linear-gradient(45deg, #ffd700, #ffed4e);
+            color: #333;
+            padding: 0.5rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 4px 10px rgba(255, 215, 0, 0.4);
+            animation: pulse 2s infinite;
+            z-index: 10;
+        }
+    </style>
+{% else %}
+    <!-- Cuando se selecciona "Todas las Ofertas", usar el diseño original de offers -->
+    <link rel="stylesheet" href="{% static 'css/offers.css' %}">
+{% endif %}
+{% endblock %}
+
+{% block content %}
+{% if not current_category %}
+<!-- Header con gradiente para ofertas - solo cuando no hay categoría seleccionada -->
+<div class="offers-header">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <h1>
+                    <i class="fas fa-tags me-2"></i>Ofertas Destacadas
+                    <span class="offers-count">({{ page_obj|length }})</span>
+                </h1>
+                <p>¡Aprovecha las mejores ofertas y descuentos en herramientas y materiales!</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<div class="container-fluid px-4 py-4">
+
+    <!-- Filtros y búsqueda mejorados -->
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <form method="GET" class="d-flex">
+                <input type="text" name="q" class="form-control me-2" placeholder="Buscar ofertas..." value="{% if search_query %}{{ search_query }}{% endif %}">
+                <button type="submit" class="btn btn-search">
+                    <i class="fas fa-search"></i>
+                </button>
+            </form>
+        </div>
+        <div class="col-md-4">
+            <select class="form-select" onchange="window.location.href=this.value">
+                <option value="{% url 'catalog:offers' %}?sort=discount{% if search_query %}&q={{ search_query }}{% endif %}" {% if sort_by == 'discount' %}selected{% endif %}>Mayor descuento</option>
+                <option value="{% url 'catalog:offers' %}?sort=newest{% if search_query %}&q={{ search_query }}{% endif %}" {% if sort_by == 'newest' %}selected{% endif %}>Más recientes</option>
+                <option value="{% url 'catalog:offers' %}?sort=name{% if search_query %}&q={{ search_query }}{% endif %}" {% if sort_by == 'name' %}selected{% endif %}>Ordenar por nombre</option>
+                <option value="{% url 'catalog:offers' %}?sort=price_low{% if search_query %}&q={{ search_query }}{% endif %}" {% if sort_by == 'price_low' %}selected{% endif %}>Precio: menor a mayor</option>
+                <option value="{% url 'catalog:offers' %}?sort=price_high{% if search_query %}&q={{ search_query }}{% endif %}" {% if sort_by == 'price_high' %}selected{% endif %}>Precio: mayor a menor</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Sidebar con categorías - diseño más compacto -->
+        <div class="col-lg-2 col-md-3">
+            <div class="filter-section">
+                <h5 class="fw-bold mb-3 text-dark">Categorías</h5>
+                <div class="category-list">
+                    <a href="{% url 'catalog:offers' %}" class="category-item {% if not current_category %}active{% endif %}">
+                        <i class="fas fa-tags me-2"></i>Todas las Ofertas
+                    </a>
+                    {% for category in categories %}
+                    <a href="{% url 'catalog:offers' %}?category={{ category.slug }}" class="category-item {% if current_category == category.slug %}active{% endif %}">
+                        {{ category.name }}
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Lista de productos - más ancho -->
+        <div class="col-lg-10 col-md-9">
+            {% if page_obj %}
+            <div class="row">
+                {% for product in page_obj %}
+                <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 mb-4">
+                    <div class="product-card h-100">
+                        <div class="product-image">
+                            {% if product.main_image %}
+                                <img src="{{ product.main_image.get_image_url }}" class="img-fluid" alt="{{ product.name }}">
+                            {% else %}
+                                <img src="https://via.placeholder.com/300x200?text=Sin+Imagen" class="img-fluid" alt="{{ product.name }}">
+                            {% endif %}
+                            
+                            {% if product.is_featured %}
+                                <span class="featured-badge">Destacado</span>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="product-info">
+                            <h5 class="product-title">{{ product.name }}</h5>
+                            <p class="product-description">{{ product.description|truncatewords:8 }}</p>
+                            <p class="product-category">{{ product.category.name }}</p>
+                            
+                            <div class="product-price">
+                                {% if product.has_discount %}
+                                    <span class="original-price">RD$ {{ product.original_price|floatformat:2 }}</span>
+                                    <span class="current-price">RD$ {{ product.price|floatformat:2 }}</span>
+                                {% else %}
+                                    <span class="current-price">RD$ {{ product.price|floatformat:2 }}</span>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="product-stock">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="stock-info">
+                                        Stock: 
+                                        {% if product.stock > 0 %}
+                                            <span class="text-success">{{ product.stock }} disponibles</span>
+                                        {% else %}
+                                            <span class="text-danger">Sin stock</span>
+                                        {% endif %}
+                                    </span>
+                                    {% if product.has_discount %}
+                                        <span class="discount-badge-inline">{{ product.get_discount_percentage }}% Ofertas</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            
+                            <div class="product-actions">
+                                <a href="{% url 'catalog:product_detail' slug=product.slug %}" class="btn btn-view-details">
+                                    <i class="fas fa-eye me-2"></i>Ver Detalles
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Paginación mejorada -->
+            {% if page_obj.has_other_pages %}
+            <nav aria-label="Paginación" class="mt-5">
+                <ul class="pagination justify-content-center">
+                    {% if page_obj.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if search_query %}&q={{ search_query }}{% endif %}{% if current_category %}&category={{ current_category }}{% endif %}{% if sort_by %}&sort={{ sort_by }}{% endif %}">
+                                <i class="fas fa-chevron-left"></i> Anterior
+                            </a>
+                        </li>
+                    {% endif %}
+                    
+                    {% for num in page_obj.paginator.page_range %}
+                        {% if page_obj.number == num %}
+                            <li class="page-item active">
+                                <span class="page-link">{{ num }}</span>
+                            </li>
+                        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ num }}{% if search_query %}&q={{ search_query }}{% endif %}{% if current_category %}&category={{ current_category }}{% endif %}{% if sort_by %}&sort={{ sort_by }}{% endif %}">{{ num }}</a>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                    
+                    {% if page_obj.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if search_query %}&q={{ search_query }}{% endif %}{% if current_category %}&category={{ current_category }}{% endif %}{% if sort_by %}&sort={{ sort_by }}{% endif %}">
+                                Siguiente <i class="fas fa-chevron-right"></i>
+                            </a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+            {% endif %}
+            {% else %}
+            <div class="empty-state">
+                <i class="fas fa-tags"></i>
+                <h3>No hay ofertas disponibles</h3>
+                <p>No se encontraron productos con descuento. Intenta con otros términos de búsqueda o revisa más tarde.</p>
+                <a href="{% url 'catalog:product_list' %}" class="btn btn-view-details">
+                    <i class="fas fa-shopping-bag me-2"></i>Ver Todos los Productos
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/offers.js' %}"></script>
+{% endblock %}

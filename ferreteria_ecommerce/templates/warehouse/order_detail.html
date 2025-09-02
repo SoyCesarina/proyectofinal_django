@@ -1,0 +1,392 @@
+{% extends 'base.html' %}
+
+{% block title %}Detalle de Orden - Almacén{% endblock %}
+
+<style>
+/* Estilos para la sección de acciones */
+.btn-lg {
+    padding: 12px 24px;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.gap-2 {
+    gap: 0.75rem !important;
+}
+
+.alert-info {
+    background-color: #e7f3ff;
+    border-color: #b3d9ff;
+    color: #0c5460;
+}
+
+/* Animación para los botones */
+.btn:hover {
+    transform: translateY(-2px);
+    transition: transform 0.2s ease;
+}
+
+/* Estilos para impresión */
+@media print {
+    .btn, .alert {
+        display: none !important;
+    }
+    
+    .card {
+        border: none !important;
+        box-shadow: none !important;
+    }
+    
+    .card-header {
+        background-color: white !important;
+        border-bottom: 2px solid #000 !important;
+    }
+}
+</style>
+
+{% block content %}
+<div class="container py-5 order-detail-container">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1>
+                    <i class="fas fa-box me-2"></i>Detalle de Orden
+                </h1>
+                <a href="{% url 'warehouse:order_list' %}" class="btn btn-outline-primary">
+                    <i class="fas fa-arrow-left me-1"></i>Volver a Órdenes
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Información de la Orden -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-info-circle me-2"></i>Información de la Orden
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>Número de Orden:</strong> {{ order.order_number }}</p>
+                            <p><strong>Fecha de Creación:</strong> {{ order.created_at|date:"d/m/Y" }}</p>
+                            <p><strong>Estado:</strong> 
+                                {% if order.status == 'pending' %}
+                                    <span class="badge bg-warning">Pendiente</span>
+                                {% elif order.status == 'confirmed' %}
+                                    <span class="badge bg-info">Confirmada</span>
+                                {% elif order.status == 'ready_to_ship' %}
+                                    <span class="badge bg-primary">Lista para Despachar</span>
+                                {% elif order.status == 'shipped' %}
+                                    <span class="badge bg-success">Despachada</span>
+                                {% elif order.status == 'delivered' %}
+                                    <span class="badge bg-success">Entregada</span>
+                                {% elif order.status == 'cancelled' %}
+                                    <span class="badge bg-danger">Cancelada</span>
+                                {% endif %}
+                            </p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Total:</strong> <span class="fs-5 fw-bold text-success">RD$ {{ order.total|floatformat:2 }}</span></p>
+                            {% if order.discount %}
+                                <p><strong>Descuento:</strong> <span class="text-danger">-RD$ {{ order.discount|floatformat:2 }}</span></p>
+                            {% endif %}
+                            {% if order.coupon %}
+                                <p><strong>Cupón:</strong> <span class="text-success fw-bold">{{ order.coupon.code }}</span></p>
+                                {% if order.status == 'shipped' or order.status == 'delivered' %}
+                                <p><strong>Tipo de descuento:</strong> 
+                                    <span class="text-info">
+                                        {% if order.coupon.discount_type == 'percentage' %}
+                                            {{ order.coupon.discount_value }}%
+                                        {% else %}
+                                            RD$ {{ order.coupon.discount_value }}
+                                        {% endif %}
+                                    </span>
+                                </p>
+                                <p><strong>Porcentaje ahorrado:</strong> 
+                                    <span class="text-warning fw-bold">
+                                        {% if order.coupon.discount_type == 'percentage' %}
+                                            {{ order.coupon.discount_value }}% del total
+                                        {% else %}
+                                            {% widthratio order.discount order.subtotal 100 %}% del total
+                                        {% endif %}
+                                    </span>
+                                </p>
+                                {% endif %}
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Información del Cliente -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-user me-2"></i>Información del Cliente
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>Nombre:</strong> {{ order.customer_name }}</p>
+                            <p><strong>Email:</strong> {{ order.customer_email }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Teléfono:</strong> {{ order.customer_phone }}</p>
+                            <p><strong>Dirección:</strong> {{ order.shipping_address }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Productos de la Orden -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-shopping-cart me-2"></i>Productos de la Orden
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if order.items.all %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Producto</th>
+                                    <th>Precio Unitario</th>
+                                    <th>Cantidad</th>
+                                    <th>Subtotal</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in order.items.all %}
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            {% if item.product.main_image %}
+                                                <img src="{{ item.product.main_image.get_image_url }}" 
+                                                     alt="{{ item.product.name }}" 
+                                                     class="me-3 rounded" 
+                                                     style="width: 50px; height: 50px; object-fit: cover;"
+                                                     onerror="this.src='https://via.placeholder.com/50x50?text=Sin+Imagen'; this.onerror=null;">
+                                            {% else %}
+                                                <div class="bg-light me-3 d-flex align-items-center justify-content-center rounded" style="width: 50px; height: 50px;">
+                                                    <i class="fas fa-image text-muted"></i>
+                                                </div>
+                                            {% endif %}
+                                            <div>
+                                                <strong>{{ item.product.name }}</strong>
+                                                <br>
+                                                <small class="text-muted">{{ item.product.category.name }}</small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                                                         <td>RD$ {{ item.price|floatformat:2 }}</td>
+                                     <td>{{ item.quantity }}</td>
+                                     <td><strong>RD$ {{ item.total|floatformat:2 }}</strong></td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="text-center py-3">
+                        <i class="fas fa-exclamation-triangle text-warning" style="font-size: 2rem;"></i>
+                        <p class="mt-2">No hay productos en esta orden.</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Información de Cupón (si existe y está despachada) -->
+    {% if order.coupon and order.status == 'shipped' or order.status == 'delivered' %}
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-success">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-tag me-2"></i>Información del Cupón Aplicado
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>Código del Cupón:</strong> <span class="text-success fw-bold fs-5">{{ order.coupon.code }}</span></p>
+                            <p><strong>Tipo de Descuento:</strong> 
+                                <span class="text-info fw-bold">
+                                    {% if order.coupon.discount_type == 'percentage' %}
+                                        {{ order.coupon.discount_value }}% de descuento
+                                    {% else %}
+                                        RD$ {{ order.coupon.discount_value }} de descuento
+                                    {% endif %}
+                                </span>
+                            </p>
+                            <p><strong>Descuento Aplicado:</strong> <span class="text-danger fw-bold">-RD$ {{ order.discount|floatformat:2 }}</span></p>
+                        </div>
+                        <div class="col-md-6">
+                                                         <p><strong>Porcentaje Ahorrado:</strong> 
+                                 <span class="text-warning fw-bold fs-5">
+                                     {% if order.coupon.discount_type == 'percentage' %}
+                                         {{ order.coupon.discount_value }}% del total
+                                     {% else %}
+                                         {% widthratio order.discount order.subtotal 100 %}% del total
+                                     {% endif %}
+                                 </span>
+                             </p>
+                            <p><strong>Subtotal Original:</strong> RD$ {{ order.subtotal|floatformat:2 }}</p>
+                            <p><strong>Total Final:</strong> <span class="text-success fw-bold">RD$ {{ order.total|floatformat:2 }}</span></p>
+                        </div>
+                    </div>
+                    {% if order.coupon.description %}
+                    <div class="mt-3">
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i>
+                            <strong>Descripción del Cupón:</strong> {{ order.coupon.description }}
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Información de Despacho (si existe) -->
+    {% if order.shipment_set.first %}
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-shipping-fast me-2"></i>Información de Despacho
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% with shipment=order.shipment_set.first %}
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>Transportista:</strong> {{ shipment.carrier }}</p>
+                            <p><strong>Fecha de Despacho:</strong> {{ shipment.shipped_at|date:"d/m/Y" }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            {% if shipment.tracking_number %}
+                                <p><strong>Número de Seguimiento:</strong> {{ shipment.tracking_number }}</p>
+                            {% endif %}
+                            {% if shipment.notes %}
+                                <p><strong>Notas:</strong> {{ shipment.notes }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endwith %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Acciones -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-cogs me-2"></i>Acciones de Gestión
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <!-- Estado Actual -->
+                    <div class="alert alert-info mb-3">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <strong>Estado Actual:</strong> 
+                        {% if order.status == 'pending' %}
+                            <span class="badge bg-warning">Pendiente</span> - La orden está esperando confirmación
+                        {% elif order.status == 'confirmed' %}
+                            <span class="badge bg-info">Confirmada</span> - La orden ha sido confirmada y está lista para preparar
+                        {% elif order.status == 'ready_to_ship' %}
+                            <span class="badge bg-primary">Lista para Despachar</span> - Los productos están preparados para enviar
+                        {% elif order.status == 'shipped' %}
+                            <span class="badge bg-success">Despachada</span> - La orden ha sido enviada al cliente
+                        {% elif order.status == 'delivered' %}
+                            <span class="badge bg-success">Entregada</span> - La orden ha sido recibida por el cliente
+                        {% endif %}
+                    </div>
+
+                    <!-- Botones de Acción -->
+                    <div class="d-flex flex-wrap gap-2">
+                        {% if order.status == 'pending' %}
+                        <form method="POST" action="{% url 'warehouse:confirm_order' order.order_number %}" class="d-inline">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-info btn-lg" onclick="return confirm('¿Está seguro de que desea confirmar la orden {{ order.order_number }}?')">
+                                <i class="fas fa-check me-2"></i>Confirmar Orden
+                            </button>
+                        </form>
+                        {% endif %}
+                        
+                        {% if order.status == 'confirmed' %}
+                        <form method="POST" action="{% url 'warehouse:mark_ready_to_ship' order.order_number %}" class="d-inline">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-success btn-lg" onclick="return confirm('¿Está seguro de que desea marcar la orden {{ order.order_number }} como lista para despachar?')">
+                                <i class="fas fa-box me-2"></i>Marcar como Lista para Despachar
+                            </button>
+                        </form>
+                        {% endif %}
+                        
+                        {% if order.status == 'ready_to_ship' %}
+                        <form method="POST" action="{% url 'warehouse:ship_order' order.order_number %}" class="d-inline">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-success btn-lg" onclick="return confirm('¿Está seguro de que desea despachar la orden {{ order.order_number }}?')">
+                                <i class="fas fa-shipping-fast me-2"></i>Despachar Orden
+                            </button>
+                        </form>
+                        {% endif %}
+                        
+                        {% if order.status == 'shipped' %}
+                        <form method="POST" action="{% url 'warehouse:mark_delivered' order.order_number %}" class="d-inline">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-success btn-lg" onclick="return confirm('¿Está seguro de que desea marcar la orden {{ order.order_number }} como entregada?')">
+                                <i class="fas fa-check-circle me-2"></i>Marcar como Entregada
+                            </button>
+                        </form>
+                        {% endif %}
+
+                        <!-- Botones Adicionales -->
+                        <a href="{% url 'warehouse:order_list' %}" class="btn btn-outline-secondary btn-lg">
+                            <i class="fas fa-list me-2"></i>Volver a la Lista
+                        </a>
+                        
+                        <button type="button" class="btn btn-outline-primary btn-lg" onclick="window.print()">
+                            <i class="fas fa-print me-2"></i>Imprimir Orden
+                        </button>
+                    </div>
+
+                    <!-- Información Adicional -->
+                    <div class="mt-3">
+                        <small class="text-muted">
+                            <i class="fas fa-clock me-1"></i>
+                            <strong>Última actualización:</strong> {{ order.updated_at|date:"d/m/Y" }}
+                            {% if order.status == 'delivered' %}
+                                <br><i class="fas fa-check-double me-1"></i>
+                                <strong>Orden completada exitosamente</strong>
+                            {% endif %}
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

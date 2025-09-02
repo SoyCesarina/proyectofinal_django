@@ -1,0 +1,634 @@
+/* Responsive Design General - Ferretería E-commerce */
+
+/* ===== REGLAS PARA DIFERENTES NIVELES DE ZOOM ===== */
+
+/* Zoom bajo (75% - 90%) */
+@media screen and (max-resolution: 90dpi) {
+    body {
+        font-size: 0.9rem;
+    }
+    
+    .container {
+        max-width: 100%;
+    }
+    
+    .navbar-brand {
+        font-size: 1.3rem;
+    }
+    
+    .navbar-nav .nav-link {
+        font-size: 0.85rem;
+        padding: 0.6rem 0.8rem !important;
+    }
+    
+    .search-form .form-control {
+        font-size: 0.85rem;
+        padding: 0.6rem 0.8rem;
+    }
+    
+    .search-form .btn {
+        font-size: 0.85rem;
+        padding: 0.6rem 0.8rem;
+    }
+    
+    .card-title {
+        font-size: 1.1rem;
+    }
+    
+    .card-text {
+        font-size: 0.85rem;
+    }
+    
+    .btn {
+        font-size: 0.85rem;
+        padding: 0.6rem 1.2rem;
+    }
+    
+    .form-control {
+        font-size: 0.85rem;
+        padding: 0.6rem 0.8rem;
+    }
+    
+    .form-label {
+        font-size: 0.85rem;
+    }
+    
+    h1 {
+        font-size: 1.8rem;
+    }
+    
+    h2 {
+        font-size: 1.5rem;
+    }
+    
+    h3 {
+        font-size: 1.3rem;
+    }
+    
+    h4 {
+        font-size: 1.1rem;
+    }
+    
+    h5 {
+        font-size: 1rem;
+    }
+    
+    h6 {
+        font-size: 0.9rem;
+    }
+}
+
+/* Zoom normal (100%) - Por defecto */
+@media screen and (min-resolution: 90dpi) and (max-resolution: 110dpi) {
+    /* Mantener tamaños por defecto */
+}
+
+/* Zoom alto (125% - 150%) */
+@media screen and (min-resolution: 120dpi) and (max-resolution: 150dpi) {
+    body {
+        font-size: 1.1rem;
+    }
+    
+    .navbar-brand {
+        font-size: 1.6rem;
+    }
+    
+    .navbar-nav .nav-link {
+        font-size: 1.1rem;
+        padding: 0.8rem 1.2rem !important;
+    }
+    
+    .search-form .form-control {
+        font-size: 1.1rem;
+        padding: 0.8rem 1.2rem;
+    }
+    
+    .search-form .btn {
+        font-size: 1.1rem;
+        padding: 0.8rem 1.2rem;
+    }
+    
+    .card-title {
+        font-size: 1.3rem;
+    }
+    
+    .card-text {
+        font-size: 1.05rem;
+    }
+    
+    .btn {
+        font-size: 1.05rem;
+        padding: 0.8rem 1.5rem;
+    }
+    
+    .form-control {
+        font-size: 1.05rem;
+        padding: 0.8rem 1.2rem;
+    }
+    
+    .form-label {
+        font-size: 1.05rem;
+    }
+    
+    h1 {
+        font-size: 2.2rem;
+    }
+    
+    h2 {
+        font-size: 1.8rem;
+    }
+    
+    h3 {
+        font-size: 1.6rem;
+    }
+    
+    h4 {
+        font-size: 1.4rem;
+    }
+    
+    h5 {
+        font-size: 1.2rem;
+    }
+    
+    h6 {
+        font-size: 1.1rem;
+    }
+}
+
+/* Zoom muy alto (175% - 200%) */
+@media screen and (min-resolution: 175dpi) and (max-resolution: 200dpi) {
+    body {
+        font-size: 1.2rem;
+    }
+    
+    .navbar-brand {
+        font-size: 1.8rem;
+    }
+    
+    .navbar-nav .nav-link {
+        font-size: 1.2rem;
+        padding: 1rem 1.5rem !important;
+    }
+    
+    .search-form .form-control {
+        font-size: 1.2rem;
+        padding: 1rem 1.5rem;
+    }
+    
+    .search-form .btn {
+        font-size: 1.2rem;
+        padding: 1rem 1.5rem;
+    }
+    
+    .card-title {
+        font-size: 1.5rem;
+    }
+    
+    .card-text {
+        font-size: 1.15rem;
+    }
+    
+    .btn {
+        font-size: 1.15rem;
+        padding: 1rem 1.8rem;
+    }
+    
+    .form-control {
+        font-size: 1.15rem;
+        padding: 1rem 1.5rem;
+    }
+    
+    .form-label {
+        font-size: 1.15rem;
+    }
+    
+    h1 {
+        font-size: 2.5rem;
+    }
+    
+    h2 {
+        font-size: 2.1rem;
+    }
+    
+    h3 {
+        font-size: 1.8rem;
+    }
+    
+    h4 {
+        font-size: 1.6rem;
+    }
+    
+    h5 {
+        font-size: 1.4rem;
+    }
+    
+    h6 {
+        font-size: 1.3rem;
+    }
+}
+
+/* Zoom extremo (225%+) */
+@media screen and (min-resolution: 225dpi) {
+    body {
+        font-size: 1.4rem;
+    }
+    
+    .navbar-brand {
+        font-size: 2.2rem;
+    }
+    
+    .navbar-nav .nav-link {
+        font-size: 1.4rem;
+        padding: 1.2rem 2rem !important;
+    }
+    
+    .search-form .form-control {
+        font-size: 1.4rem;
+        padding: 1.2rem 2rem;
+    }
+    
+    .search-form .btn {
+        font-size: 1.4rem;
+        padding: 1.2rem 2rem;
+    }
+    
+    .card-title {
+        font-size: 1.8rem;
+    }
+    
+    .card-text {
+        font-size: 1.3rem;
+    }
+    
+    .btn {
+        font-size: 1.3rem;
+        padding: 1.2rem 2.2rem;
+    }
+    
+    .form-control {
+        font-size: 1.3rem;
+        padding: 1.2rem 2rem;
+    }
+    
+    .form-label {
+        font-size: 1.3rem;
+    }
+    
+    h1 {
+        font-size: 3rem;
+    }
+    
+    h2 {
+        font-size: 2.5rem;
+    }
+    
+    h3 {
+        font-size: 2.2rem;
+    }
+    
+    h4 {
+        font-size: 2rem;
+    }
+    
+    h5 {
+        font-size: 1.8rem;
+    }
+    
+    h6 {
+        font-size: 1.6rem;
+    }
+}
+
+/* ===== REGLAS PARA PANTALLAS ESPECÍFICAS ===== */
+
+/* Pantallas de alta densidad (Retina, 4K) */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+    .card {
+        border-width: 1px;
+    }
+    
+    .form-control {
+        border-width: 1px;
+    }
+    
+    .btn {
+        border-width: 1px;
+    }
+    
+    .navbar {
+        border-bottom-width: 1px;
+    }
+    
+    .table {
+        border-width: 1px;
+    }
+    
+    .table th,
+    .table td {
+        border-width: 1px;
+    }
+}
+
+/* Pantallas ultra-wide */
+@media (min-width: 1400px) {
+    .container {
+        max-width: 1320px;
+    }
+    
+    .navbar-nav .nav-link {
+        padding: 0.8rem 1.5rem !important;
+        font-size: 1.1rem;
+    }
+    
+    .search-form {
+        max-width: 450px;
+    }
+    
+    .search-form .form-control {
+        padding: 0.8rem 1.2rem;
+        font-size: 1.1rem;
+    }
+    
+    .search-form .btn {
+        padding: 0.8rem 1.2rem;
+        font-size: 1.1rem;
+    }
+    
+    .card-body {
+        padding: 2rem;
+    }
+    
+    .btn {
+        padding: 0.8rem 1.8rem;
+        font-size: 1.1rem;
+    }
+}
+
+/* Pantallas muy grandes */
+@media (min-width: 1600px) {
+    .container {
+        max-width: 1520px;
+    }
+    
+    .navbar-nav .nav-link {
+        padding: 1rem 2rem !important;
+        font-size: 1.2rem;
+    }
+    
+    .search-form {
+        max-width: 500px;
+    }
+    
+    .search-form .form-control {
+        padding: 1rem 1.5rem;
+        font-size: 1.2rem;
+    }
+    
+    .search-form .btn {
+        padding: 1rem 1.5rem;
+        font-size: 1.2rem;
+    }
+    
+    .card-body {
+        padding: 2.5rem;
+    }
+    
+    .btn {
+        padding: 1rem 2rem;
+        font-size: 1.2rem;
+    }
+}
+
+/* ===== REGLAS PARA ORIENTACIÓN ===== */
+
+/* Orientación landscape en móviles */
+@media (max-height: 500px) and (orientation: landscape) {
+    .navbar {
+        padding: 0.5rem 0;
+    }
+    
+    .navbar-brand {
+        font-size: 1.1rem;
+    }
+    
+    .navbar-nav .nav-link {
+        padding: 0.4rem 0.8rem !important;
+        font-size: 0.9rem;
+    }
+    
+    .search-form .form-control {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.9rem;
+    }
+    
+    .search-form .btn {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.9rem;
+    }
+    
+    .container {
+        padding-top: 0.5rem;
+        padding-bottom: 0.5rem;
+    }
+    
+    .card-body {
+        padding: 1rem;
+    }
+    
+    .btn {
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+    }
+}
+
+/* ===== REGLAS PARA IMPRESIÓN ===== */
+
+@media print {
+    .navbar,
+    .search-form,
+    .btn,
+    .cart-badge {
+        display: none !important;
+    }
+    
+    .container {
+        max-width: 100% !important;
+        padding: 0 !important;
+    }
+    
+    body {
+        background: white !important;
+        color: black !important;
+        font-size: 12pt !important;
+        line-height: 1.4 !important;
+    }
+    
+    h1, h2, h3, h4, h5, h6 {
+        color: black !important;
+        page-break-after: avoid !important;
+    }
+    
+    .card {
+        border: 1px solid #ccc !important;
+        box-shadow: none !important;
+        margin-bottom: 20px !important;
+        page-break-inside: avoid !important;
+    }
+    
+    .table {
+        border: 1px solid #ccc !important;
+        page-break-inside: avoid !important;
+    }
+    
+    .table th,
+    .table td {
+        border: 1px solid #ccc !important;
+        color: black !important;
+        background: white !important;
+    }
+    
+    a {
+        color: black !important;
+        text-decoration: underline !important;
+    }
+    
+    img {
+        max-width: 100% !important;
+        height: auto !important;
+    }
+}
+
+/* ===== REGLAS PARA ACCESIBILIDAD ===== */
+
+/* Alto contraste */
+@media (prefers-contrast: high) {
+    .card {
+        border-width: 2px;
+        border-color: #000;
+    }
+    
+    .form-control {
+        border-width: 2px;
+        border-color: #000;
+    }
+    
+    .btn {
+        border-width: 2px;
+        border-color: #000;
+    }
+    
+    .navbar {
+        border-bottom-width: 2px;
+        border-bottom-color: #000;
+    }
+}
+
+/* Modo oscuro del sistema */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --light-gray: #1f2937;
+        --border-color: #374151;
+        --text-primary: #f9fafb;
+        --text-secondary: #d1d5db;
+    }
+    
+    body {
+        background-color: var(--light-gray);
+        color: var(--text-primary);
+    }
+    
+    .card {
+        background-color: #374151;
+        border-color: #4b5563;
+    }
+    
+    .navbar {
+        background-color: #374151 !important;
+        border-bottom-color: #4b5563;
+    }
+    
+    .form-control {
+        background-color: #4b5563;
+        border-color: #6b7280;
+        color: var(--text-primary);
+    }
+    
+    .form-control:focus {
+        background-color: #4b5563;
+        border-color: #3b82f6;
+    }
+}
+
+/* ===== REGLAS PARA REDUCIR MOVIMIENTO ===== */
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+    
+    .cart-badge {
+        animation: none;
+    }
+    
+    .product-card:hover {
+        transform: none;
+    }
+    
+    .btn:hover {
+        transform: none;
+    }
+}
+
+/* ===== REGLAS PARA FOCUS VISIBLE ===== */
+
+/* Solo mostrar outline cuando se navega con teclado */
+.focus-visible:focus {
+    outline: 2px solid #3b82f6;
+    outline-offset: 2px;
+}
+
+/* Ocultar outline por defecto */
+*:focus {
+    outline: none;
+}
+
+/* ===== REGLAS PARA TAMAÑOS DE FUENTE RELATIVOS ===== */
+
+/* Usar unidades rem para escalabilidad */
+html {
+    font-size: 16px;
+}
+
+@media (max-width: 768px) {
+    html {
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 576px) {
+    html {
+        font-size: 12px;
+    }
+}
+
+@media screen and (min-resolution: 120dpi) {
+    html {
+        font-size: 18px;
+    }
+}
+
+@media screen and (min-resolution: 144dpi) {
+    html {
+        font-size: 20px;
+    }
+}
+
+@media screen and (min-resolution: 192dpi) {
+    html {
+        font-size: 24px;
+    }
+}

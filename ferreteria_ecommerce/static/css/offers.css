@@ -1,0 +1,386 @@
+/* Estilos específicos para la página de ofertas */
+
+/* Header de ofertas con gradiente */
+.offers-header {
+    background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+    color: white;
+    padding: 2rem 0;
+    margin-bottom: 2rem;
+    border-radius: 0 0 1rem 1rem;
+    box-shadow: 0 4px 15px rgba(238, 90, 36, 0.3);
+}
+
+.offers-header h1 {
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.offers-header p {
+    font-size: 1.1rem;
+    opacity: 0.9;
+    margin-bottom: 0;
+}
+
+.offers-count {
+    font-size: 1.5rem;
+    opacity: 0.8;
+    margin-left: 0.5rem;
+}
+
+/* Estilos unificados para todos los badges */
+.discount-badge,
+.featured-badge {
+    position: absolute;
+    padding: 0.5rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    animation: pulse 2s infinite;
+    z-index: 10;
+}
+
+/* Badge de descuento (Ofertas) */
+.discount-badge {
+    top: 10px;
+    right: 10px;
+    background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+    color: white;
+    box-shadow: 0 4px 10px rgba(238, 90, 36, 0.4);
+}
+
+/* Badge destacado */
+.featured-badge {
+    top: 10px;
+    left: 10px;
+    background: linear-gradient(45deg, #ffd700, #ffed4e);
+    color: #333;
+    box-shadow: 0 4px 10px rgba(255, 215, 0, 0.4);
+}
+
+/* Badge de oferta inline (al lado del stock) - mantiene color naranja-rojo */
+.discount-badge-inline {
+    background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+    color: white;
+    padding: 0.3rem 0.6rem;
+    border-radius: 15px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 2px 8px rgba(238, 90, 36, 0.4);
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+/* Precios con animación */
+.product-price {
+    margin: 1rem 0;
+    transition: all 0.3s ease;
+}
+
+.original-price {
+    text-decoration: line-through;
+    color: #999;
+    font-size: 0.9rem;
+    margin-right: 0.5rem;
+    opacity: 0.7;
+}
+
+.current-price {
+    color: #e74c3c;
+    font-size: 1.3rem;
+    font-weight: 700;
+    text-shadow: 1px 1px 2px rgba(231, 76, 60, 0.2);
+}
+
+/* Botones de acción mejorados */
+.product-actions {
+    display: flex;
+    justify-content: center;
+    margin-top: 1.5rem;
+}
+
+.btn-view-details {
+    background: white;
+    color: var(--primary-color);
+    border: 2px solid var(--primary-color);
+    border-radius: 0.375rem;
+    padding: 0.75rem 1.5rem;
+    font-weight: 500;
+    font-size: 0.875rem;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    flex: 1;
+    min-width: 140px;
+    text-align: center;
+    height: auto;
+    width: 100%;
+    box-shadow: none;
+}
+
+.btn-view-details:hover {
+    background: var(--primary-color);
+    color: white;
+    border: 2px solid var(--primary-color);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+    text-decoration: none;
+}
+
+
+
+.btn-out-of-stock {
+    background: var(--text-secondary);
+    color: white;
+    border: none;
+    border-radius: 0.5rem;
+    padding: 0.6rem 0.8rem;
+    font-weight: 600;
+    font-size: 0.85rem;
+    cursor: not-allowed;
+    flex: 1;
+    min-width: 120px;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 42px;
+}
+
+
+
+/* Filtros mejorados */
+.filter-section {
+    background: white;
+    border-radius: 15px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    border: 2px solid #f8f9fa;
+    transition: all 0.3s ease;
+}
+
+.filter-section:hover {
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+    border-color: #e9ecef;
+}
+
+.category-item {
+    display: block;
+    padding: 0.8rem 1rem;
+    margin-bottom: 0.5rem;
+    color: #495057;
+    text-decoration: none;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+    border-left: 3px solid transparent;
+}
+
+.category-item:hover {
+    background: linear-gradient(45deg, #f8f9fa, #e9ecef);
+    color: #e74c3c;
+    border-left-color: #e74c3c;
+    transform: translateX(5px);
+    text-decoration: none;
+}
+
+.category-item.active {
+    background: linear-gradient(45deg, #e74c3c, #c0392b);
+    color: white;
+    border-left-color: #c0392b;
+    box-shadow: 0 4px 10px rgba(231, 76, 60, 0.3);
+}
+
+/* Búsqueda mejorada */
+.search-form {
+    position: relative;
+}
+
+.search-form .form-control {
+    border-radius: 25px;
+    border: 2px solid #e9ecef;
+    padding: 0.75rem 1rem;
+    transition: all 0.3s ease;
+}
+
+.search-form .form-control:focus {
+    border-color: #e74c3c;
+    box-shadow: 0 0 0 0.2rem rgba(231, 76, 60, 0.25);
+}
+
+.btn-search {
+    background: linear-gradient(45deg, #e74c3c, #c0392b);
+    border: none;
+    color: white;
+    border-radius: 25px;
+    padding: 0.75rem 1.5rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
+}
+
+.btn-search:hover {
+    background: linear-gradient(45deg, #c0392b, #a93226);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(231, 76, 60, 0.4);
+    color: white;
+}
+
+/* Selector de ordenamiento */
+.form-select {
+    border-radius: 25px;
+    border: 2px solid #e9ecef;
+    padding: 0.75rem 1rem;
+    transition: all 0.3s ease;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m1 6 7 7 7-7'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 16px 12px;
+}
+
+.form-select:focus {
+    border-color: #e74c3c;
+    box-shadow: 0 0 0 0.2rem rgba(231, 76, 60, 0.25);
+}
+
+/* Estado vacío mejorado */
+.empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    border: 2px dashed #e9ecef;
+}
+
+.empty-state i {
+    font-size: 4rem;
+    color: #e74c3c;
+    margin-bottom: 1rem;
+    opacity: 0.7;
+}
+
+.empty-state h3 {
+    color: #495057;
+    margin-bottom: 1rem;
+    font-weight: 600;
+}
+
+.empty-state p {
+    color: #6c757d;
+    margin-bottom: 2rem;
+    font-size: 1.1rem;
+}
+
+/* Paginación mejorada */
+.pagination .page-link {
+    border-radius: 10px;
+    margin: 0 0.2rem;
+    border: 2px solid #e9ecef;
+    color: #495057;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.pagination .page-link:hover {
+    background: linear-gradient(45deg, #e74c3c, #c0392b);
+    border-color: #e74c3c;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(231, 76, 60, 0.3);
+}
+
+.pagination .page-item.active .page-link {
+    background: linear-gradient(45deg, #e74c3c, #c0392b);
+    border-color: #e74c3c;
+    box-shadow: 0 4px 10px rgba(231, 76, 60, 0.3);
+}
+
+/* Notificaciones toast */
+.notification-toast {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+    min-width: 300px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    animation: slideInRight 0.3s ease;
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+/* Indicador de carga */
+.loading-indicator {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 9999;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 2rem;
+    border-radius: 1rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .offers-header h1 {
+        font-size: 2rem;
+    }
+    
+    .offers-header p {
+        font-size: 1rem;
+    }
+    
+    .filter-section {
+        margin-bottom: 2rem;
+    }
+    
+    .product-actions {
+        flex-direction: row;
+        gap: 0.3rem;
+    }
+    
+    /* Estilos responsive heredados del base.css */
+}
+
+@media (max-width: 576px) {
+    .offers-header {
+        padding: 1.5rem 0;
+    }
+    
+    .offers-header h1 {
+        font-size: 1.8rem;
+    }
+    
+    .product-actions {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .discount-badge,
+    .featured-badge {
+        font-size: 0.7rem;
+        padding: 0.4rem 0.7rem;
+        border-radius: 15px;
+    }
+}

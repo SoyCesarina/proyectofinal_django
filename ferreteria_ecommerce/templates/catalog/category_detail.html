@@ -1,0 +1,227 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ category.name }} - Ferretodo{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4 py-5">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'catalog:home' %}">Inicio</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'catalog:product_list' %}">Productos</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ category.name }}</li>
+        </ol>
+    </nav>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h1 class="mb-2">
+                        <i class="fas fa-tools me-2"></i>{{ category.name }}
+                    </h1>
+                    {% if category.description %}
+                        <p class="text-muted mb-0">{{ category.description }}</p>
+                    {% endif %}
+                </div>
+                <div class="text-end">
+                    <span class="badge bg-primary fs-6">{{ page_obj.paginator.count }} productos</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filtros y búsqueda -->
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <form method="GET" class="d-flex">
+                <input type="text" name="q" class="form-control me-2" placeholder="Buscar en {{ category.name }}..." value="{% if request.GET.q %}{{ request.GET.q }}{% endif %}">
+                <button type="submit" class="btn btn-search">
+                    <i class="fas fa-search"></i>
+                </button>
+            </form>
+        </div>
+        <div class="col-md-4">
+            <select class="form-select" onchange="window.location.href=this.value">
+                <option value="{% url 'catalog:category_detail' slug=category.slug %}?sort=newest{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}" {% if request.GET.sort == 'newest' or not request.GET.sort %}selected{% endif %}>Más recientes</option>
+                <option value="{% url 'catalog:category_detail' slug=category.slug %}?sort=name{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}" {% if request.GET.sort == 'name' %}selected{% endif %}>Ordenar por nombre</option>
+                <option value="{% url 'catalog:category_detail' slug=category.slug %}?sort=price_low{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}" {% if request.GET.sort == 'price_low' %}selected{% endif %}>Precio: menor a mayor</option>
+                <option value="{% url 'catalog:category_detail' slug=category.slug %}?sort=price_high{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}" {% if request.GET.sort == 'price_high' %}selected{% endif %}>Precio: mayor a menor</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Subcategorías (si existen) -->
+    {% if category.children.all %}
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title mb-3">
+                        Subcategorías
+                    </h5>
+                    <div class="row">
+                        {% for subcategory in category.children.all %}
+                        <div class="col-md-3 col-sm-6 mb-2">
+                            <a href="{% url 'catalog:category_detail' slug=subcategory.slug %}" class="btn btn-outline-primary w-100">
+                                {{ subcategory.name }}
+                                <span class="badge bg-secondary ms-2">{{ subcategory.product_set.count }}</span>
+                            </a>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Lista de productos -->
+    <div class="row">
+        {% if page_obj %}
+            {% for product in page_obj %}
+            <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 mb-4">
+                <div class="card product-card h-100">
+                    {% if product.main_image %}
+                        <img src="{{ product.main_image.get_image_url }}" class="card-img-top" alt="{{ product.name }}">
+                    {% else %}
+                        <img src="https://via.placeholder.com/300x200?text=Sin+Imagen" class="card-img-top" alt="{{ product.name }}">
+                    {% endif %}
+                    
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">{{ product.name }}</h5>
+                        <p class="card-text text-muted">{{ product.description|truncatewords:10 }}</p>
+                        
+                        <div class="mt-auto">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="h5 text-primary mb-0">RD$ {{ product.price|floatformat:2 }}</span>
+                                {% if product.has_discount %}
+                                    <span class="badge badge-discount">{{ product.get_discount_percentage }}% Ofertas</span>
+                                {% endif %}
+                            </div>
+                            
+                            {% if product.has_discount %}
+                            <div class="mb-2">
+                                <small class="text-muted text-decoration-line-through">RD$ {{ product.original_price|floatformat:2 }}</small>
+                            </div>
+                            {% endif %}
+                            
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <small class="text-muted">Stock: {{ product.stock }}</small>
+                                {% if product.is_featured %}
+                                    <span class="badge bg-warning">Destacado</span>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="mb-3">
+                                <small class="text-muted">
+                                    <i class="fas fa-calendar-alt me-1"></i>
+                                    Agregado: {{ product.created_at|date:"d/m/Y H:i" }}
+                                </small>
+                            </div>
+                            
+                            <div class="d-grid gap-2">
+                                <a href="{% url 'catalog:product_detail' slug=product.slug %}" class="btn btn-primary">
+                                    <i class="fas fa-eye me-2"></i>Ver Detalles
+                                </a>
+                                {% if product.stock > 0 %}
+                                <form method="POST" action="{% url 'cart:add_to_cart' product.id %}">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="quantity" value="1">
+                                    <button type="submit" class="btn btn-outline-primary">
+                                        <i class="fas fa-cart-plus me-2"></i>Agregar al Carrito
+                                    </button>
+                                </form>
+                                {% else %}
+                                <button class="btn btn-outline-secondary" disabled>
+                                    <i class="fas fa-times me-2"></i>Sin Stock
+                                </button>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="col-12">
+                <div class="text-center py-5">
+                    <i class="fas fa-search text-muted" style="font-size: 4rem;"></i>
+                    <h3 class="mt-3 mb-3">No se encontraron productos en esta categoría</h3>
+                    <p class="text-muted">Intenta con otros términos de búsqueda o revisa otras categorías.</p>
+                    <a href="{% url 'catalog:product_list' %}" class="btn btn-primary">
+                        <i class="fas fa-home me-2"></i>Ver Todos los Productos
+                    </a>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Paginación -->
+    {% if page_obj.has_other_pages %}
+    <nav aria-label="Paginación" class="mt-4">
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}">Anterior</a>
+                </li>
+            {% endif %}
+            
+            {% for num in page_obj.paginator.page_range %}
+                {% if page_obj.number == num %}
+                    <li class="page-item active">
+                        <span class="page-link">{{ num }}</span>
+                    </li>
+                {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ num }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}">{{ num }}</a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+            
+            {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}">Siguiente</a>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+
+    <!-- Navegación -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between">
+                <a href="{% url 'catalog:product_list' %}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left me-2"></i>Volver a Productos
+                </a>
+                {% if category.parent %}
+                    <a href="{% url 'catalog:category_detail' slug=category.parent.slug %}" class="btn btn-outline-primary">
+                        <i class="fas fa-level-up-alt me-2"></i>{{ category.parent.name }}
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.product-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.badge-discount {
+    background-color: #22c55e;
+    color: white;
+}
+
+.card-img-top {
+    height: 200px;
+    object-fit: cover;
+}
+</style>
+{% endblock %}

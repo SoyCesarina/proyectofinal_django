@@ -1,0 +1,211 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ product.name }} - Ferretodo{% endblock %}
+
+{% block content %}
+<!-- Header del detalle del producto -->
+<div class="product-detail-header">
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'catalog:home' %}">Inicio</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'catalog:product_list' %}">Productos</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'catalog:category_detail' slug=product.category.slug %}">{{ product.category.name }}</a></li>
+                <li class="breadcrumb-item active" aria-current="page">{{ product.name }}</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+<div class="container py-5">
+    <div class="row">
+        <!-- Imágenes del producto -->
+        <div class="col-lg-6">
+            <div class="product-images">
+                {% if product.main_image %}
+                    <img src="{{ product.main_image.get_image_url }}" class="main-image" alt="{{ product.name }}" id="mainImage">
+                {% else %}
+                    <img src="https://via.placeholder.com/500x400?text=Sin+Imagen" class="main-image" alt="{{ product.name }}" id="mainImage">
+                {% endif %}
+                
+                {% if product.images.count > 1 %}
+                <div class="thumbnail-images">
+                    {% for image in product.images.all %}
+                    <img src="{{ image.image.url }}" class="thumbnail" alt="{{ image.alt_text }}" onclick="changeMainImage(this.src)">
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Información del producto -->
+        <div class="col-lg-6">
+            <div class="product-detail-section">
+                <h2>{{ product.name }}</h2>
+                
+                <div class="mb-3">
+                    <span class="badge bg-secondary">{{ product.category.name }}</span>
+                    {% if product.is_featured %}
+                        <span class="badge badge-new">Destacado</span>
+                    {% endif %}
+                    {% if product.has_discount %}
+                        <span class="badge badge-discount">{{ product.get_discount_percentage }}% Ofertas</span>
+                    {% endif %}
+                </div>
+
+                <div class="product-price mb-3">
+                    {% if product.has_discount %}
+                        <span class="product-original-price">RD$ {{ product.original_price|floatformat:2 }}</span>
+                        <span class="product-discount-price">RD$ {{ product.price|floatformat:2 }}</span>
+                    {% else %}
+                        RD$ {{ product.price|floatformat:2 }}
+                    {% endif %}
+                </div>
+
+                <div class="product-description mb-4">
+                    {{ product.description }}
+                </div>
+
+                <!-- Estado del stock -->
+                <div class="mb-4">
+                    {% if product.stock > 0 %}
+                        <div class="stock-status in-stock">
+                            <i class="fas fa-check-circle"></i>
+                            En stock - {{ product.stock }} unidades disponibles
+                        </div>
+                    {% else %}
+                        <div class="stock-status out-of-stock">
+                            <i class="fas fa-times-circle"></i>
+                            Sin stock
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="row mb-4">
+                    <div class="col-6">
+                        <strong>SKU:</strong> {{ product.sku }}
+                    </div>
+                    {% if product.weight %}
+                    <div class="col-6">
+                        <strong>Peso:</strong> {{ product.weight }} kg
+                    </div>
+                    {% endif %}
+                </div>
+
+                {% if product.dimensions %}
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <strong>Dimensiones:</strong> {{ product.dimensions }}
+                    </div>
+                </div>
+                {% endif %}
+
+                {% if product.stock > 0 %}
+                <form method="POST" action="{% url 'cart:add_to_cart' product.id %}" class="mb-4">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label for="quantity" class="form-label">Cantidad:</label>
+                            <div class="quantity-selector">
+                                <button type="button" class="btn" onclick="decrementQuantity()">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                                <input type="number" name="quantity" id="quantity" value="1" min="1" max="{{ product.stock }}" class="form-control" readonly>
+                                <button type="button" class="btn" onclick="incrementQuantity()">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="col-md-8 d-flex align-items-end">
+                            <button type="submit" class="btn btn-add-to-cart w-100">
+                                <i class="fas fa-cart-plus me-2"></i>Agregar al Carrito
+                            </button>
+                        </div>
+                    </div>
+                </form>
+                {% endif %}
+
+                <div class="d-grid gap-2">
+                    <a href="{% url 'cart:cart_detail' %}" class="btn btn-outline-primary">
+                        <i class="fas fa-shopping-cart me-2"></i>Ver Carrito
+                    </a>
+                    <a href="{% url 'catalog:product_list' %}" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left me-2"></i>Seguir Comprando
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Productos relacionados -->
+    {% if related_products %}
+    <div class="related-products">
+        <h3>Productos Relacionados</h3>
+        <div class="row">
+            {% for related_product in related_products %}
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="card product-card h-100">
+                    {% if related_product.main_image %}
+                        <img src="{{ related_product.main_image.get_image_url }}" class="card-img-top" alt="{{ related_product.name }}">
+                    {% else %}
+                        <img src="https://via.placeholder.com/300x200?text=Sin+Imagen" class="card-img-top" alt="{{ related_product.name }}">
+                    {% endif %}
+                    
+                    {% if related_product.has_discount %}
+                        <span class="badge badge-discount">{{ related_product.get_discount_percentage }}% Ofertas</span>
+                    {% endif %}
+                    {% if related_product.is_featured %}
+                        <span class="badge badge-new">Nuevo</span>
+                    {% endif %}
+                    
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">{{ related_product.name }}</h5>
+                        <p class="card-text">{{ related_product.description|truncatewords:10 }}</p>
+                        
+                        <div class="mt-auto">
+                            <div class="mb-3">
+                                {% if related_product.has_discount %}
+                                    <span class="original-price">RD$ {{ related_product.original_price|floatformat:2 }}</span>
+                                    <span class="discount-price">RD$ {{ related_product.price|floatformat:2 }}</span>
+                                {% else %}
+                                    <span class="price">RD$ {{ related_product.price|floatformat:2 }}</span>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="d-grid gap-2">
+                                <a href="{% url 'catalog:product_detail' slug=related_product.slug %}" class="btn btn-primary">
+                                    <i class="fas fa-eye me-2"></i>Ver Detalles
+                                </a>
+                                {% if related_product.stock > 0 %}
+                                <form method="POST" action="{% url 'cart:add_to_cart' related_product.id %}" class="d-grid">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="quantity" value="1">
+                                    <button type="submit" class="btn btn-secondary">
+                                        <i class="fas fa-cart-plus me-2"></i>Agregar al Carrito
+                                    </button>
+                                </form>
+                                {% else %}
+                                <button class="btn btn-secondary" disabled>
+                                    <i class="fas fa-times me-2"></i>Sin Stock
+                                </button>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/product_detail.css' %}">
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/product_detail.js' %}"></script>
+{% endblock %}
+{% endblock %}

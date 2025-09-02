@@ -1,0 +1,193 @@
+{% extends 'base.html' %}
+
+{% block title %}Detalle de Orden {{ order.order_number }} - Ferretería Online{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="mb-0">
+                    <i class="fas fa-receipt me-2"></i>Orden {{ order.order_number }}
+                </h1>
+                <span class="badge bg-{% if order.status == 'pending' %}warning{% elif order.status == 'confirmed' %}info{% elif order.status == 'ready_to_ship' %}primary{% elif order.status == 'shipped' %}info{% elif order.status == 'delivered' %}success{% else %}danger{% endif %} fs-6">
+                    {{ order.get_status_display }}
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Información de la Orden -->
+        <div class="col-lg-8">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-shopping-bag me-2"></i>Productos de la Orden
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% for item in order.items.all %}
+                    <div class="row mb-3 border-bottom pb-3">
+                        <div class="col-md-2">
+                            {% if item.product.main_image %}
+                                <img src="{{ item.product.main_image.get_image_url }}" 
+                                     class="img-fluid rounded" 
+                                     alt="{{ item.product.name }}" 
+                                     style="width: 80px; height: 80px; object-fit: cover;"
+                                     onerror="this.src='https://via.placeholder.com/80x80?text=Sin+Imagen'; this.onerror=null;">
+                            {% else %}
+                                <img src="https://via.placeholder.com/80x80?text=Sin+Imagen" 
+                                     class="img-fluid rounded" 
+                                     alt="{{ item.product.name }}"
+                                     style="width: 80px; height: 80px; object-fit: cover;">
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="mb-1">{{ item.product.name }}</h6>
+                            <p class="text-muted small mb-1">{{ item.product.category.name }}</p>
+                            <p class="text-muted small mb-0">SKU: {{ item.product.sku }}</p>
+                        </div>
+                        <div class="col-md-2 text-center">
+                            <p class="mb-1"><strong>{{ item.quantity }}</strong></p>
+                            <p class="text-muted small">Cantidad</p>
+                        </div>
+                        <div class="col-md-2 text-end">
+                            <p class="mb-1"><strong>RD$ {{ item.price|floatformat:2 }}</strong></p>
+                            <p class="text-muted small">Precio unitario</p>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            {% if order.notes %}
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-sticky-note me-2"></i>Notas de la Orden
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <p class="mb-0">{{ order.notes }}</p>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Resumen de la Orden -->
+        <div class="col-lg-4">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-user me-2"></i>Información del Cliente
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <p class="mb-2"><strong>Nombre:</strong> {{ order.customer_name }}</p>
+                    <p class="mb-2"><strong>Email:</strong> {{ order.customer_email }}</p>
+                    <p class="mb-2"><strong>Teléfono:</strong> {{ order.customer_phone }}</p>
+                    <hr>
+                    <p class="mb-2"><strong>Dirección de Envío:</strong></p>
+                    <p class="mb-2">{{ order.shipping_address }}</p>
+                    <p class="mb-2">{{ order.shipping_city }}, {{ order.shipping_state }}</p>
+                    <p class="mb-0">{{ order.shipping_zip_code }}</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-calculator me-2"></i>Resumen de la Orden
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Subtotal:</span>
+                        <span>RD$ {{ order.subtotal|floatformat:2 }}</span>
+                    </div>
+                    
+                    {% if order.coupon %}
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Cupón aplicado:</span>
+                        <span class="text-success fw-bold">{{ order.coupon.code }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Tipo de descuento:</span>
+                        <span class="text-info">
+                            {% if order.coupon.discount_type == 'percentage' %}
+                                {{ order.coupon.discount_value }}%
+                            {% else %}
+                                RD$ {{ order.coupon.discount_value }}
+                            {% endif %}
+                        </span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Descuento aplicado:</span>
+                        <span class="text-success fw-bold">-RD$ {{ order.discount|floatformat:2 }}</span>
+                    </div>
+                                         {% if order.status == 'shipped' or order.status == 'delivered' %}
+                     <div class="d-flex justify-content-between mb-2">
+                         <span>Porcentaje ahorrado:</span>
+                         <span class="text-warning fw-bold">
+                             {% if order.coupon.discount_type == 'percentage' %}
+                                 {{ order.coupon.discount_value }}% del total
+                             {% else %}
+                                 {% widthratio order.discount order.subtotal 100 %}% del total
+                             {% endif %}
+                         </span>
+                     </div>
+                     {% endif %}
+                    {% endif %}
+                    
+                    <hr>
+                    
+                    <div class="d-flex justify-content-between mb-3">
+                        <strong>Total:</strong>
+                        <strong class="h5 text-primary">RD$ {{ order.total|floatformat:2 }}</strong>
+                    </div>
+
+                    <div class="mb-3">
+                        <small class="text-muted">
+                            <i class="fas fa-calendar me-1"></i>
+                            Orden creada: {{ order.created_at|date:"d/m/Y H:i" }}
+                        </small>
+                    </div>
+
+                    {% if order.coupon %}
+                    <div class="alert alert-success border-success">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-tag me-2 text-success"></i>
+                            <div>
+                                <strong>Cupón aplicado exitosamente</strong><br>
+                                <small class="text-muted">
+                                    {{ order.coupon.description|default:"Cupón de descuento" }}
+                                </small>
+                                {% if order.status == 'shipped' or order.status == 'delivered' %}
+                                <br><small class="text-success">
+                                    <i class="fas fa-check-circle me-1"></i>
+                                    Descuento confirmado en orden despachada
+                                </small>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="d-grid gap-2 mt-4">
+                <a href="{% url 'catalog:product_list' %}" class="btn btn-outline-primary">
+                    <i class="fas fa-shopping-bag me-2"></i>Seguir Comprando
+                </a>
+                <a href="{% url 'catalog:home' %}" class="btn btn-outline-secondary">
+                    <i class="fas fa-home me-2"></i>Ir al Inicio
+                </a>
+                <a href="{% url 'warehouse:order_list' %}" class="btn btn-outline-info">
+                    <i class="fas fa-boxes me-2"></i>Ir al Almacén
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

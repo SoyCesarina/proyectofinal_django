@@ -1,0 +1,212 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Finalizar Compra - Ferretodo{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/checkout.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="checkout-container">
+    <div class="checkout-content">
+        <div class="row g-0">
+            <!-- Información de Envío -->
+            <div class="col-lg-8">
+                <div class="checkout-form-section">
+                    <div class="form-container">
+                        <h1 class="checkout-title">
+                            <i class="fas fa-shopping-cart me-2"></i>Finalizar Compra
+                        </h1>
+                        
+                        <form method="POST" class="checkout-form">
+                            {% csrf_token %}
+                            
+                            <div class="form-section">
+                                <h3 class="section-title">
+                                    Información de Envío
+                                </h3>
+                                
+                                <div class="form-group mb-4">
+                                    <label for="{{ form.customer_name.id_for_label }}" class="form-label">
+                                        Nombre completo
+                                    </label>
+                                    {{ form.customer_name }}
+                                    {% if form.customer_name.errors %}
+                                        <div class="text-danger small">
+                                            {{ form.customer_name.errors.0 }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="form-group mb-4">
+                                    <label for="{{ form.customer_email.id_for_label }}" class="form-label">
+                                        Email
+                                    </label>
+                                    {{ form.customer_email }}
+                                    {% if form.customer_email.errors %}
+                                        <div class="text-danger small">
+                                            {{ form.customer_email.errors.0 }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="form-group mb-4">
+                                    <label for="{{ form.customer_phone.id_for_label }}" class="form-label">
+                                        Teléfono
+                                    </label>
+                                    {{ form.customer_phone }}
+                                    {% if form.customer_phone.errors %}
+                                        <div class="text-danger small">
+                                            {{ form.customer_phone.errors.0 }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="form-group mb-4">
+                                    <label for="{{ form.shipping_address.id_for_label }}" class="form-label">
+                                        Dirección de envío
+                                    </label>
+                                    {{ form.shipping_address }}
+                                    {% if form.shipping_address.errors %}
+                                        <div class="text-danger small">
+                                            {{ form.shipping_address.errors.0 }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="form-group mb-4">
+                                    <label for="{{ form.shipping_city.id_for_label }}" class="form-label">
+                                        Ciudad
+                                    </label>
+                                    {{ form.shipping_city }}
+                                    {% if form.shipping_city.errors %}
+                                        <div class="text-danger small">
+                                            {{ form.shipping_city.errors.0 }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="form-group mb-4">
+                                    <label for="{{ form.shipping_state.id_for_label }}" class="form-label">
+                                        Estado/Provincia
+                                    </label>
+                                    {{ form.shipping_state }}
+                                    {% if form.shipping_state.errors %}
+                                        <div class="text-danger small">
+                                            {{ form.shipping_state.errors.0 }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="form-group mb-4">
+                                    <label for="{{ form.shipping_zip_code.id_for_label }}" class="form-label">
+                                        Código postal
+                                    </label>
+                                    {{ form.shipping_zip_code }}
+                                    {% if form.shipping_zip_code.errors %}
+                                        <div class="text-danger small">
+                                            {{ form.shipping_zip_code.errors.0 }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="form-group mb-4">
+                                    <label for="{{ form.notes.id_for_label }}" class="form-label">
+                                        Notas adicionales (opcional)
+                                    </label>
+                                    {{ form.notes }}
+                                    {% if form.notes.errors %}
+                                        <div class="text-danger small">
+                                            {{ form.notes.errors.0 }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="form-submit">
+                                    <button type="submit" class="btn btn-checkout">
+                                        <i class="fas fa-check me-2"></i>Confirmar Pedido
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Resumen del Pedido -->
+            <div class="col-lg-4">
+                <div class="order-summary-section">
+                    <div class="summary-container">
+                        <h1 class="summary-title">
+                            <i class="fas fa-receipt me-2"></i>Resumen del Pedido
+                        </h1>
+                        
+                        <!-- Items del pedido -->
+                        <div class="summary-section">
+                            <div class="order-items">
+                                {% for item in cart_items %}
+                                <div class="order-item">
+                                    <div class="item-info">
+                                        <div class="item-name">{{ item.get_product_display_name }} x {{ item.quantity }}</div>
+                                        <div class="item-price">RD$ {{ item.get_total|floatformat:2 }}</div>
+                                    </div>
+                                </div>
+                                {% empty %}
+                                <div class="order-item">
+                                    <div class="item-info">
+                                        <div class="item-name">No hay items en el carrito</div>
+                                        <div class="item-price">RD$ 0.00</div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        
+                        <!-- Totales -->
+                        <div class="summary-section">
+                            <div class="summary-totals">
+                                <div class="total-row">
+                                    <span>Subtotal:</span>
+                                    <span class="amount">RD$ {{ cart.get_total|floatformat:2 }}</span>
+                                </div>
+                                
+                                {% if applied_coupon %}
+                                <div class="total-row discount">
+                                    <span>Cupón aplicado:</span>
+                                    <span class="text-success">{{ applied_coupon.code }}</span>
+                                </div>
+                                <div class="total-row discount">
+                                    <span>Descuento:</span>
+                                    <span class="text-success">-RD$ {{ discount_amount|floatformat:2 }}</span>
+                                </div>
+                                {% endif %}
+                                
+                                <div class="total-row shipping">
+                                    <span>Envío:</span>
+                                    <span class="text-success">Gratis</span>
+                                </div>
+                                
+                                <div class="total-row final-total">
+                                    <strong>Total:</strong>
+                                    <strong class="total-amount">RD$ {{ final_total|floatformat:2 }}</strong>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Nota de pago -->
+                        <div class="summary-section">
+                            <div class="payment-notice">
+                                <div class="notice-box">
+                                    <i class="fas fa-info-circle me-2"></i>
+                                    <span>El pago se realizará al momento de la entrega.</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

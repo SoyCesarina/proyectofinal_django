@@ -1,0 +1,238 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Órdenes - Almacén{% endblock %}
+
+{% block content %}
+<div class="warehouse-container py-5">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="mb-4">
+                <i class="fas fa-boxes me-2"></i>Gestión de Órdenes
+            </h1>
+        </div>
+    </div>
+
+    <!-- Filtros -->
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <div class="btn-group" role="group">
+                <button type="button" class="btn btn-outline-primary {% if not status_filter %}active{% endif %}" data-filter="all">
+                    Todas
+                </button>
+                <button type="button" class="btn btn-outline-warning {% if status_filter == 'pending' %}active{% endif %}" data-filter="pending">
+                    Pendientes
+                </button>
+                <button type="button" class="btn btn-outline-info {% if status_filter == 'confirmed' %}active{% endif %}" data-filter="confirmed">
+                    Confirmadas
+                </button>
+                <button type="button" class="btn btn-outline-primary {% if status_filter == 'ready_to_ship' %}active{% endif %}" data-filter="ready_to_ship">
+                    Listas para Despachar
+                </button>
+                <button type="button" class="btn btn-outline-success {% if status_filter == 'shipped' %}active{% endif %}" data-filter="shipped">
+                    Despachadas
+                </button>
+                <button type="button" class="btn btn-outline-success {% if status_filter == 'delivered' %}active{% endif %}" data-filter="delivered">
+                    Entregadas
+                </button>
+            </div>
+        </div>
+        <div class="col-md-4 text-end">
+            <span class="badge bg-secondary fs-6 me-3">
+                Total: {{ page_obj.paginator.count }} órdenes
+            </span>
+            {% if page_obj.paginator.count > 0 %}
+            <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteAllOrdersModal">
+                <i class="fas fa-trash-alt me-1"></i>Eliminar Todas
+            </button>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Lista de órdenes -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    {% if page_obj %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Número de Orden</th>
+                                    <th>Cliente</th>
+                                    <th>Fecha y Hora</th>
+                                    <th>Total</th>
+                                    <th>Estado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for order in page_obj %}
+                                <tr class="{% if order.status == 'delivered' %}order-delivered{% elif order.status == 'pending' %}order-pending{% endif %}">
+                                    <td>
+                                        <strong>{{ order.order_number }}</strong>
+                                    </td>
+                                    <td>
+                                        <div>{{ order.customer_name }}</div>
+                                        <small class="text-muted">{{ order.customer_email }}</small>
+                                    </td>
+                                    <td>{{ order.created_at|date:"d/m/Y H:i" }}</td>
+                                    <td><strong>RD$ {{ order.total|floatformat:2 }}</strong></td>
+                                    <td>
+                                        {% if order.status == 'pending' %}
+                                            <span class="badge bg-warning">Pendiente</span>
+                                        {% elif order.status == 'confirmed' %}
+                                            <span class="badge bg-info">Confirmada</span>
+                                        {% elif order.status == 'ready_to_ship' %}
+                                            <span class="badge bg-primary">Lista para Despachar</span>
+                                        {% elif order.status == 'shipped' %}
+                                            <span class="badge bg-success">Despachada</span>
+                                        {% elif order.status == 'delivered' %}
+                                            <span class="badge bg-success">Entregada</span>
+                                        {% elif order.status == 'cancelled' %}
+                                            <span class="badge bg-danger">Cancelada</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <div class="btn-group" role="group">
+                                            <a href="{% url 'warehouse:order_detail' order.order_number %}" class="btn btn-sm btn-outline-primary" title="Ver detalles">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                                                                        {% if order.status == 'pending' %}
+                                            <form method="POST" action="{% url 'warehouse:confirm_order' order.order_number %}{% if request.GET.status %}?status={{ request.GET.status }}{% endif %}{% if request.GET.page %}{% if request.GET.status %}&{% else %}?{% endif %}page={{ request.GET.page }}{% endif %}" class="d-inline">
+                                                {% csrf_token %}
+                                                <button type="submit" class="btn btn-sm btn-outline-info" title="Confirmar orden">
+                                                    <i class="fas fa-check"></i> Confirmar
+                                                </button>
+                                            </form>
+                                            {% endif %}
+                                            {% if order.status == 'confirmed' %}
+                                            <form method="POST" action="{% url 'warehouse:mark_ready_to_ship' order.order_number %}{% if request.GET.status %}?status={{ request.GET.status }}{% endif %}{% if request.GET.page %}{% if request.GET.status %}&{% else %}?{% endif %}page={{ request.GET.page }}{% endif %}" class="d-inline">
+                                                {% csrf_token %}
+                                                <button type="submit" class="btn btn-sm btn-outline-success" title="Marcar como lista para despachar">
+                                                    <i class="fas fa-box"></i> Lista
+                                                </button>
+                                            </form>
+                                            {% endif %}
+                                                                                          {% if order.status == 'ready_to_ship' %}
+                                             <form method="POST" action="{% url 'warehouse:ship_order' order.order_number %}{% if request.GET.status %}?status={{ request.GET.status }}{% endif %}{% if request.GET.page %}{% if request.GET.status %}&{% else %}?{% endif %}page={{ request.GET.page }}{% endif %}" class="d-inline">
+                                                 {% csrf_token %}
+                                                 <button type="submit" class="btn btn-sm btn-outline-success" title="Despachar orden" onclick="return confirm('¿Está seguro de que desea despachar la orden {{ order.order_number }}?')">
+                                                     <i class="fas fa-shipping-fast"></i> Despachar
+                                                 </button>
+                                             </form>
+                                             {% endif %}
+                                             {% if order.status == 'shipped' %}
+                                             <form method="POST" action="{% url 'warehouse:mark_delivered' order.order_number %}{% if request.GET.status %}?status={{ request.GET.status }}{% endif %}{% if request.GET.page %}{% if request.GET.status %}&{% else %}?{% endif %}page={{ request.GET.page }}{% endif %}" class="d-inline">
+                                                 {% csrf_token %}
+                                                 <button type="submit" class="btn btn-sm btn-outline-success" title="Marcar como entregada" onclick="return confirm('¿Está seguro de que desea marcar la orden {{ order.order_number }} como entregada?')">
+                                                     <i class="fas fa-check-circle"></i> Entregada
+                                                 </button>
+                                             </form>
+                                             {% endif %}
+                                        </div>
+                                    </td>
+                                </tr>
+                                
+                                
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <!-- Paginación -->
+                    {% if page_obj.has_other_pages %}
+                    <nav aria-label="Paginación">
+                        <ul class="pagination justify-content-center">
+                            {% if page_obj.has_previous %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if status_filter %}&status={{ status_filter }}{% endif %}">Anterior</a>
+                                </li>
+                            {% endif %}
+                            
+                            {% for num in page_obj.paginator.page_range %}
+                                {% if page_obj.number == num %}
+                                    <li class="page-item active">
+                                        <span class="page-link">{{ num }}</span>
+                                    </li>
+                                {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{ num }}{% if status_filter %}&status={{ status_filter }}{% endif %}">{{ num }}</a>
+                                    </li>
+                                {% endif %}
+                            {% endfor %}
+                            
+                            {% if page_obj.has_next %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if status_filter %}&status={{ status_filter }}{% endif %}">Siguiente</a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                    {% endif %}
+                    {% else %}
+                    <div class="text-center py-5">
+                        <i class="fas fa-box-open text-muted" style="font-size: 4rem;"></i>
+                        <h3 class="mt-3 mb-3">No hay órdenes</h3>
+                        <p class="text-muted">No se encontraron órdenes con los filtros aplicados.</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Confirmación para Eliminar Todas las Órdenes -->
+<div class="modal fade" id="deleteAllOrdersModal" tabindex="-1" aria-labelledby="deleteAllOrdersModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="deleteAllOrdersModalLabel">
+                    <i class="fas fa-exclamation-triangle me-2"></i>Confirmar Eliminación
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="text-center mb-3">
+                    <i class="fas fa-trash-alt text-danger" style="font-size: 3rem;"></i>
+                </div>
+                <h6 class="text-center mb-3">¿Está seguro de que desea eliminar TODAS las órdenes?</h6>
+                <div class="alert alert-warning">
+                    <strong>⚠️ ADVERTENCIA:</strong> Esta acción es irreversible y eliminará:
+                    <ul class="mb-0 mt-2">
+                        <li>Todas las órdenes del sistema ({{ page_obj.paginator.count }} órdenes)</li>
+                        <li>Todos los items de las órdenes</li>
+                        <li>Todos los movimientos de inventario relacionados</li>
+                        <li>Todos los despachos</li>
+                    </ul>
+                </div>
+                <p class="text-muted small text-center">
+                    Esta acción no se puede deshacer. Asegúrese de hacer una copia de seguridad si es necesario.
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-1"></i>Cancelar
+                </button>
+                <form method="POST" action="{% url 'warehouse:delete_all_orders' %}" class="d-inline">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger" id="confirmDeleteAllBtn">
+                        <i class="fas fa-trash-alt me-1"></i>Sí, Eliminar Todo
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/warehouse.css' %}">
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/warehouse.js' %}"></script>
+{% endblock %}
+
+{% endblock %}

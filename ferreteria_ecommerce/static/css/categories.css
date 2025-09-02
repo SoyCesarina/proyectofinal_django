@@ -1,0 +1,174 @@
+/* Estilos específicos para las categorías - Archivo separado para asegurar carga */
+
+/* Sección de categorías */
+.categories-section {
+    padding: 80px 0;
+    background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
+}
+
+.categories-section h2 {
+    text-align: center;
+    font-weight: 800;
+    margin-bottom: 3rem;
+    color: #0f172a;
+    position: relative;
+}
+
+.categories-section h2::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 4px;
+    background: linear-gradient(90deg, #1e40af, #dc2626);
+    border-radius: 2px;
+}
+
+/* Tarjetas de categorías */
+.category-card {
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.3s ease;
+    display: block;
+    height: 100%;
+}
+
+.category-card:hover {
+    color: inherit;
+    transform: translateY(-10px);
+    text-decoration: none;
+}
+
+.category-card .card {
+    border: 3px solid #cbd5e1;
+    border-radius: 1.5rem;
+    overflow: hidden;
+    background: white;
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    transition: all 0.3s ease;
+    height: 100%;
+}
+
+.category-card:hover .card {
+    box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+    border-color: #1e40af;
+    border-width: 3px;
+}
+
+/* Imagen superior de la tarjeta */
+.category-card .card-img-top {
+    height: 200px;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Colores específicos para cada categoría */
+.category-card.almacenamiento .card-img-top {
+    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+}
+
+.category-card.automotriz .card-img-top {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+}
+
+.category-card.electricidad .card-img-top {
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+}
+
+.category-card.electronica .card-img-top {
+    background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+}
+
+.category-card.fijaciones .card-img-top {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+}
+
+.category-card.herramientas-jardin .card-img-top {
+    background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+}
+
+/* Efectos de textura */
+.category-card .card-img-top::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="50" cy="50" r="1" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+    opacity: 0.3;
+}
+
+/* Iconos de Font Awesome */
+.category-card .fas,
+.category-card .card-img-top i {
+    font-size: 4rem !important;
+    color: white !important;
+    position: relative;
+    z-index: 10 !important;
+    transition: all 0.3s ease;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+.category-card:hover .fas,
+.category-card:hover .card-img-top i {
+    transform: scale(1.1) rotate(5deg);
+    text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.4);
+}
+
+/* Cuerpo de la tarjeta */
+.category-card .card-body {
+    padding: 1.5rem;
+    text-align: center;
+}
+
+.category-card .card-title {
+    font-weight: 700;
+    font-size: 1.25rem;
+    margin-bottom: 0.5rem;
+    color: #0f172a;
+}
+
+.category-card .card-text {
+    color: #475569;
+    font-size: 0.9rem;
+}
+
+/* Responsive para las categorías */
+@media (max-width: 768px) {
+    .categories-section {
+        padding: 40px 0;
+    }
+    
+    .category-card .fas,
+    .category-card .card-img-top i {
+        font-size: 3rem !important;
+    }
+    
+    .category-card .card-img-top {
+        height: 150px;
+    }
+}
+
+@media (max-width: 576px) {
+    .categories-section h2 {
+        font-size: 1.75rem;
+    }
+    
+    .category-card .fas,
+    .category-card .card-img-top i {
+        font-size: 2.5rem !important;
+    }
+    
+    .category-card .card-img-top {
+        height: 120px;
+    }
+}
