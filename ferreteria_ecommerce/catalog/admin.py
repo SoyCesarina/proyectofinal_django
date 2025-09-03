@@ -6,7 +6,7 @@ from .models import Category, Product, ProductImage, ProductVariant, ItemStock
 class ProductImageInline(admin.TabularInline):
     model = ProductImage
     extra = 1
-    fields = ['image_data', 'image_type', 'filename', 'alt_text', 'is_main', 'order']
+    fields = ['image', 'alt_text', 'is_main', 'order']
 
 
 class ProductVariantInline(admin.TabularInline):
@@ -143,8 +143,15 @@ class ItemStockAdmin(admin.ModelAdmin):
 
 @admin.register(ProductImage)
 class ProductImageAdmin(admin.ModelAdmin):
-    list_display = ['product', 'filename', 'is_main', 'order', 'created_at']
+    list_display = ['product', 'image_preview', 'is_main', 'order', 'created_at']
     list_filter = ['is_main', 'product__category']
-    search_fields = ['product__name', 'filename', 'alt_text']
+    search_fields = ['product__name', 'alt_text']
     ordering = ['product__name', 'order']
-    readonly_fields = ['created_at']
+    readonly_fields = ['created_at', 'image_preview']
+    
+    def image_preview(self, obj):
+        """Mostrar vista previa de la imagen"""
+        if obj.image:
+            return f"Imagen cargada: {obj.image.name}"
+        return "Sin imagen"
+    image_preview.short_description = 'Vista previa'

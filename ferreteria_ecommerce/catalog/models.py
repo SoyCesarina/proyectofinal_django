@@ -80,10 +80,7 @@ class Product(models.Model):
 
 class ProductImage(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='images', verbose_name="Producto")
-    # Campo para almacenar la imagen como datos binarios en la base de datos
-    image_data = models.BinaryField(verbose_name="Datos de imagen", null=True, blank=True)
-    image_type = models.CharField(max_length=50, default='image/jpeg', verbose_name="Tipo de imagen")
-    filename = models.CharField(max_length=255, default='default.jpg', verbose_name="Nombre del archivo")
+    image = models.ImageField(upload_to='products/', verbose_name="Imagen", null=True, blank=True)
     alt_text = models.CharField(max_length=200, blank=True, verbose_name="Texto alternativo")
     is_main = models.BooleanField(default=False, verbose_name="Imagen principal")
     order = models.PositiveIntegerField(default=0, verbose_name="Orden")
@@ -104,13 +101,17 @@ class ProductImage(models.Model):
         super().save(*args, **kwargs)
 
     def get_image_url(self):
-        """Obtener URL para servir la imagen desde la base de datos"""
-        return reverse('catalog:product_image', kwargs={'image_id': self.id})
+        """Obtener URL de la imagen"""
+        if self.image:
+            return self.image.url
+        return None
 
     def get_image_data_base64(self):
         """Obtener los datos de imagen en formato base64 para usar en templates"""
-        if self.image_data:
-            return base64.b64encode(self.image_data).decode('utf-8')
+        if self.image:
+            import base64
+            with open(self.image.path, 'rb') as img_file:
+                return base64.b64encode(img_file.read()).decode('utf-8')
         return None
 
 

@@ -96,8 +96,8 @@
                 <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 mb-4">
                     <div class="product-card h-100">
                         <div class="product-image">
-                            {% if product.main_image %}
-                                <img src="{{ product.main_image.get_image_url }}" class="img-fluid" alt="{{ product.name }}">
+                            {% if product.main_image and product.main_image.image %}
+                                <img src="{{ product.main_image.image.url }}" class="img-fluid" alt="{{ product.name }}">
                             {% else %}
                                 <img src="https://via.placeholder.com/300x200?text=Sin+Imagen" class="img-fluid" alt="{{ product.name }}">
                             {% endif %}

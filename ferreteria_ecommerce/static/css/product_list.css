@@ -109,20 +109,17 @@
 .product-image {
     position: relative;
     overflow: hidden;
-    height: auto;
-    min-height: 280px;
-    max-height: 380px;
+    height: 280px;
     display: flex;
     align-items: center;
     justify-content: center;
     background: #f8f9fa;
-    padding: 20px;
+    padding: 15px;
 }
 
 .product-image img {
     width: 100%;
-    height: auto;
-    max-height: 340px;
+    height: 100%;
     object-fit: contain;
     transition: all 0.3s ease;
     padding: 0;
