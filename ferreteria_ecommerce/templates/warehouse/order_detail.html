@@ -1,48 +1,11 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}Detalle de Orden - Almacén{% endblock %}
 
-<style>
-/* Estilos para la sección de acciones */
-.btn-lg {
-    padding: 12px 24px;
-    font-size: 16px;
-    font-weight: 500;
-}
-
-.gap-2 {
-    gap: 0.75rem !important;
-}
-
-.alert-info {
-    background-color: #e7f3ff;
-    border-color: #b3d9ff;
-    color: #0c5460;
-}
-
-/* Animación para los botones */
-.btn:hover {
-    transform: translateY(-2px);
-    transition: transform 0.2s ease;
-}
-
-/* Estilos para impresión */
-@media print {
-    .btn, .alert {
-        display: none !important;
-    }
-    
-    .card {
-        border: none !important;
-        box-shadow: none !important;
-    }
-    
-    .card-header {
-        background-color: white !important;
-        border-bottom: 2px solid #000 !important;
-    }
-}
-</style>
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/warehouse.css' %}">
+{% endblock %}
 
 {% block content %}
 <div class="container py-5 order-detail-container">

@@ -962,3 +962,29 @@
     overflow: hidden;
     background-color: transparent !important;
 }
+
+/* Estilos para los iconos de las características */
+.features-section .fas {
+    font-size: 3rem;
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+}
+
+/* Estilos para el icono principal del hero */
+.hero-section .fas.fa-tools {
+    font-size: 8rem;
+    opacity: 0.3;
+}
+
+/* Estilos para los iconos de las categorías */
+.category-card .card-img-top {
+    height: 200px;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+.category-card .card-img-top i {
+    font-size: 3rem;
+    color: white;
+}

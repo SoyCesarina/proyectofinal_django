@@ -1,6 +1,11 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}{{ category.name }} - Ferretodo{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/categories.css' %}">
+{% endblock %}
 
 {% block content %}
 <div class="container-fluid px-4 py-5">
@@ -203,25 +208,4 @@
         </div>
     </div>
 </div>
-
-<style>
-.product-card {
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.product-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-}
-
-.badge-discount {
-    background-color: #22c55e;
-    color: white;
-}
-
-.card-img-top {
-    height: 200px;
-    object-fit: cover;
-}
-</style>
 {% endblock %}

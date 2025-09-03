@@ -172,3 +172,23 @@
         height: 120px;
     }
 }
+
+/* Estilos específicos para category_detail.html */
+.product-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.badge-discount {
+    background-color: #22c55e;
+    color: white;
+}
+
+.card-img-top {
+    height: 200px;
+    object-fit: cover;
+}
