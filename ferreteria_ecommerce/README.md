@@ -2,7 +2,7 @@
 
 ## Descripción del Proyecto
 
-Sistema de e-commerce completo para ferretería desarrollado en Django que incluye todos los puntos del proyecto que esta en la documentacion con: gestión de catálogo, carrito de compras, órdenes, inventario y promociones. El proyecto está diseñado para manejar productos con variantes, control de stock, cupones de descuento y gestión de envíos.
+Sistema de e-commerce completo para ferretería desarrollado en Django que incluye gestión de catálogo, carrito de compras, órdenes, inventario y promociones. El proyecto está diseñado para manejar productos con variantes, control de stock, cupones de descuento y gestión de envíos.
 
 ## Características Principales
 
@@ -15,59 +15,36 @@ Sistema de e-commerce completo para ferretería desarrollado en Django que inclu
 - **Panel de Administración**: Interfaz Django Admin personalizada
 - **Responsive Design**: Interfaz adaptativa para diferentes dispositivos
 
-## Arquitectura del Sistema
-
-### Aplicaciones Django
-
-1. **`catalog`**: Gestión de productos, categorías e imágenes
-2. **`cart`**: Carrito de compras y gestión de sesiones
-3. **`orders`**: Procesamiento de órdenes y checkout
-4. **`warehouse`**: Control de inventario y envíos
-5. **`promotions`**: Sistema de cupones y descuentos
-
-### Modelos de Datos Principales
-
-- **Product**: Productos base con información general
-- **ProductVariant**: Variantes de productos (color, tamaño, etc.)
-- **Category**: Categorías jerárquicas de productos
-- **Cart/CartItem**: Carrito de compras por sesión
-- **Order/OrderItem**: Órdenes y sus items
-- **InventoryMovement**: Movimientos de inventario
-- **Coupon**: Cupones de descuento
-
-## Requisitos del Sistema
-
-### Software Requerido
-
-- **Python**: 3.8 o superior
-- **PostgreSQL**: 12 o superior
-- **pip**: Gestor de paquetes de Python
-- **Git**: Control de versiones
-
-### Dependencias de Python
-
-```
-Django==5.2.5
-psycopg2-binary==2.9.10
-requests==2.32.4
-Pillow==10.4.0
-python-decouple==3.8
-gunicorn==21.2.0
-whitenoise==6.6.0
-```
-
 ## Instalación y Configuración
 
-Se descarga el proyecto (clonar el repositorio) y luego se crea un entorno virtual para trabajar de forma aislada con las librerías necesarias, evitando afectar el sistema principal.
+### 1. Clonar el Repositorio
+
+```bash
+git clone [URL_DEL_REPOSITORIO]
+cd ferreteria_ecommerce
+```
+
+### 2. Crear Entorno Virtual
+
+```bash
+# Crear entorno virtual
+python -m venv entornovirtual
+
+# Activar entorno virtual (Windows)
+entornovirtual\Scripts\activate
+
+# Activar entorno virtual (Linux/Mac)
+source entornovirtual/bin/activate
+```
 
 ### 3. Instalar Dependencias
 
-se instalo todas las dependencias necesarias.
-
+```bash
+pip install -r requirements.txt
+```
 
 ### 4. Configurar Base de Datos PostgreSQL
 
-se configuro la base de datos PostgreSQL. 
 ```sql
 -- Crear base de datos
 CREATE DATABASE django2proyecto;
@@ -79,7 +56,7 @@ GRANT ALL PRIVILEGES ON DATABASE django2proyecto TO postgres;
 
 ### 5. Configurar Variables de Entorno
 
-Se creo el archivo `.env` en la raíz de mi proyecto:
+Crear el archivo `.env` en la raíz del proyecto:
 
 ```env
 DEBUG=True
@@ -93,10 +70,6 @@ DATABASE_PORT=5432
 
 ### 6. Ejecutar Migraciones
 
-
-hice algunas migraciones:
-
-
 ```bash
 python manage.py makemigrations
 python manage.py migrate
@@ -108,10 +81,17 @@ python manage.py migrate
 python manage.py createsuperuser
 ```
 
-### 8. Cargar Datos Iniciales (Opcional)
+### 8. Cargar Datos de Ejemplo
 
 ```bash
-python manage.py loaddata base.sql
+# Poblar base de datos con productos y categorías
+python manage.py populate_database
+
+# Crear cupones de ejemplo
+python manage.py create_coupons
+
+# Crear imágenes de productos
+python manage.py populate_product_media
 ```
 
 ### 9. Ejecutar el Servidor
@@ -120,14 +100,129 @@ python manage.py loaddata base.sql
 python manage.py runserver
 ```
 
-El proyecto esta disponible en: http://127.0.0.1:8000/  y en git 
+El proyecto estará disponible en: http://127.0.0.1:8000/
+
+## Estructura del Proyecto y Archivos
+
+### **ferreteria_ecommerce/** (Configuración Principal)
+- **`settings.py`**: Configuración principal de Django (base de datos, middleware, apps instaladas)
+- **`urls.py`**: URLs principales del proyecto que enrutan a las diferentes aplicaciones
+- **`wsgi.py`**: Configuración WSGI para despliegue en producción
+- **`asgi.py`**: Configuración ASGI para aplicaciones asíncronas
+
+### **catalog/** (Gestión de Productos)
+- **`models.py`**: Modelos de datos para productos, categorías, variantes e inventario
+  - `Category`: Categorías jerárquicas de productos
+  - `Product`: Productos base con información general
+  - `ProductVariant`: Variantes de productos (color, tamaño, etc.)
+  - `ProductImage`: Imágenes de productos (sistema legacy)
+  - `ProductosMedia`: Sistema mejorado de imágenes de productos
+  - `ItemStock`: Control de stock por producto y variante
+- **`views.py`**: Vistas para catálogo, búsqueda, productos destacados y ofertas
+- **`urls.py`**: Rutas del catálogo (home, productos, categorías, ofertas)
+- **`admin.py`**: Configuración del panel de administración para productos
+- **`management/commands/`**: Comandos personalizados para poblar datos
+
+### **cart/** (Carrito de Compras)
+- **`models.py`**: Modelos del carrito basado en sesiones
+  - `Cart`: Carrito asociado a una sesión
+  - `CartItem`: Items individuales en el carrito
+- **`views.py`**: Lógica del carrito (agregar, remover, actualizar, aplicar cupones)
+- **`urls.py`**: Rutas del carrito y operaciones AJAX
+
+### **orders/** (Gestión de Órdenes)
+- **`models.py`**: Modelos de órdenes y items
+  - `Order`: Órdenes con información del cliente y envío
+  - `OrderItem`: Items individuales de cada orden
+- **`views.py`**: Procesamiento de checkout y visualización de órdenes
+- **`forms.py`**: Formularios para datos de checkout
+- **`urls.py`**: Rutas de órdenes y checkout
+- **`admin.py`**: Configuración del admin para órdenes
+
+### **warehouse/** (Control de Inventario)
+- **`models.py`**: Modelos de inventario y despachos
+  - `InventoryMovement`: Registro de movimientos de stock
+  - `Shipment`: Registro de despachos
+- **`views.py`**: Gestión de órdenes para despacho y control de inventario
+- **`urls.py`**: Rutas del área de almacén
+- **`admin.py`**: Configuración del admin para inventario
+
+### **promotions/** (Sistema de Cupones)
+- **`models.py`**: Modelo de cupones de descuento
+  - `Coupon`: Cupones con diferentes tipos de descuento
+- **`admin.py`**: Configuración del admin para cupones
+- **`management/commands/`**: Comandos para crear y gestionar cupones
+
+### **templates/** (Plantillas HTML)
+- **`base.html`**: Plantilla base con navegación y estructura común
+- **`catalog/`**: Plantillas del catálogo (home, productos, categorías, ofertas)
+- **`cart/`**: Plantillas del carrito de compras
+- **`orders/`**: Plantillas de checkout y detalle de órdenes
+- **`warehouse/`**: Plantillas del área de almacén
+
+### **static/** (Archivos Estáticos)
+- **`css/`**: Hojas de estilo CSS
+  - `base.css`: Estilos principales y navegación
+  - `cart.css`: Estilos específicos del carrito
+  - `checkout.css`: Estilos del proceso de checkout
+  - `warehouse.css`: Estilos del área de almacén
+  - `responsive.css`: Estilos para dispositivos móviles
+- **`js/`**: Archivos JavaScript
+  - `base.js`: Funcionalidad común (carrito, navegación)
+  - `cart.js`: Funcionalidad específica del carrito
+  - `warehouse.js`: Funcionalidad del área de almacén
+- **`images/`**: Imágenes estáticas (logos, iconos)
+
+### **media/** (Archivos Subidos)
+- **`products/`**: Imágenes de productos subidas por usuarios
+- **`categories/`**: Imágenes de categorías
+
+### **entornovirtual/** (Entorno Virtual)
+- **`Scripts/`**: Scripts de activación del entorno virtual
+- **`Lib/`**: Librerías de Python instaladas
+- **`pyvenv.cfg`**: Configuración del entorno virtual
+
+## Decisiones Técnicas
+
+### 1. **Arquitectura de Aplicaciones**
+- **Separación por funcionalidad**: Cada aplicación maneja una responsabilidad específica
+- **Modularidad**: Fácil mantenimiento y escalabilidad
+- **Reutilización**: Componentes independientes y reutilizables
+
+### 2. **Base de Datos PostgreSQL**
+- **Robustez**: Mejor rendimiento para consultas complejas
+- **Transacciones ACID**: Consistencia de datos garantizada
+- **Escalabilidad**: Soporte para grandes volúmenes de datos
+- **Soporte JSON**: Flexibilidad para datos no estructurados
+
+### 3. **Sistema de Carrito Basado en Sesiones**
+- **Sin autenticación**: Funciona para usuarios anónimos
+- **Persistencia**: Carrito se mantiene entre páginas
+- **Flexibilidad**: Fácil conversión a sistema con usuarios registrados
+
+### 4. **Gestión de Inventario con Auditoría**
+- **Trazabilidad completa**: Todos los movimientos se registran
+- **Tipos de movimiento**: Entrada, salida y ajustes
+- **Stock reservado**: Control de stock para carritos activos
+
+### 5. **Sistema de Variantes de Productos**
+- **Flexibilidad**: Productos con múltiples opciones
+- **Stock independiente**: Cada variante tiene su propio stock
+- **Precios diferenciados**: Modificadores de precio por variante
+
+### 6. **Sistema de Cupones Flexible**
+- **Tipos de descuento**: Porcentaje y monto fijo
+- **Validaciones**: Fechas, límites de uso, montos mínimos
+- **Control de uso**: Seguimiento de cupones utilizados
+
+### 7. **Gestión de Imágenes Dual**
+- **ProductImage**: Sistema legacy mantenido para compatibilidad
+- **ProductosMedia**: Sistema mejorado con metadatos
+- **Almacenamiento**: Archivos en sistema de archivos con referencias en BD
 
 ## Configuración de Desarrollo
 
-### Configuración de Base de Datos
-
-El proyecto está configurado para usar PostgreSQL con los siguientes parámetros por defecto:
-
+### Base de Datos
 ```python
 DATABASES = {
     'default': {
@@ -141,8 +236,7 @@ DATABASES = {
 }
 ```
 
-### Configuración de Archivos Estáticos
-
+### Archivos Estáticos y Media
 ```python
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
@@ -152,8 +246,7 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 ```
 
-### Configuración de Internacionalización
-
+### Configuración Regional
 ```python
 LANGUAGE_CODE = 'es-do'
 TIME_ZONE = 'America/Santo_Domingo'
@@ -161,115 +254,72 @@ USE_I18N = True
 USE_TZ = False
 ```
 
-## Estructura del Proyecto
+## Comandos de Gestión Personalizados
 
-```
-ferreteria_ecommerce/
-├── catalog/                 # Aplicación de catálogo
-│   ├── models.py           # Modelos de productos y categorías
-│   ├── views.py            # Vistas del catálogo
-│   ├── urls.py             # URLs del catálogo
-│   └── admin.py            # Configuración del admin
-├── cart/                   # Aplicación del carrito
-│   ├── models.py           # Modelos del carrito
-│   ├── views.py            # Vistas del carrito
-│   └── urls.py             # URLs del carrito
-├── orders/                 # Aplicación de órdenes
-│   ├── models.py           # Modelos de órdenes
-│   ├── views.py            # Vistas de órdenes
-│   ├── forms.py            # Formularios de checkout
-│   └── urls.py             # URLs de órdenes
-├── warehouse/              # Aplicación de bodega
-│   ├── models.py           # Modelos de inventario
-│   ├── views.py            # Vistas de bodega
-│   └── urls.py             # URLs de bodega
-├── promotions/             # Aplicación de promociones
-│   ├── models.py           # Modelos de cupones
-│   └── admin.py            # Configuración del admin
-├── templates/              # Plantillas HTML
-│   ├── base.html           # Plantilla base
-│   ├── catalog/            # Plantillas del catálogo
-│   ├── cart/               # Plantillas del carrito
-│   ├── orders/             # Plantillas de órdenes
-│   └── warehouse/          # Plantillas de bodega
-├── static/                 # Archivos estáticos
-│   ├── css/                # Hojas de estilo
-│   ├── js/                 # JavaScript
-│   └── images/             # Imágenes
-├── media/                  # Archivos subidos por usuarios
-├── ferreteria_ecommerce/   # Configuración del proyecto
-│   ├── settings.py         # Configuración de Django
-│   ├── urls.py             # URLs principales
-│   └── wsgi.py             # Configuración WSGI
-└── manage.py               # Script de gestión de Django
+### Comandos Disponibles
+
+```bash
+# Poblar base de datos con productos y categorías
+python manage.py populate_database
+
+# Crear cupones de ejemplo
+python manage.py create_coupons
+
+# Crear imágenes de productos
+python manage.py populate_product_media
+
+# Probar flujo completo del e-commerce
+python manage.py test_ecommerce_flow
+
+# Migrar stock de productos
+python manage.py migrate_stock
+
+# Corregir fechas de cupones
+python manage.py fix_coupon_dates
 ```
 
-## Decisiones Técnicas
+## Flujo de Funcionamiento
 
-### 1. Base de Datos
+### 1. **Navegación y Catálogo**
+- Usuario navega por categorías y productos
+- Búsqueda de productos por nombre
+- Visualización de productos destacados y ofertas
 
-**PostgreSQL**: Elegido por su robustez, soporte para transacciones complejas y manejo eficiente de datos relacionales.
+### 2. **Carrito de Compras**
+- Agregar productos al carrito (con validación de stock)
+- Actualizar cantidades
+- Aplicar cupones de descuento
+- Remover productos
 
-**Razones**:
-- Mejor rendimiento para consultas complejas
-- Soporte nativo para JSON
-- Transacciones ACID
-- Escalabilidad
+### 3. **Checkout**
+- Formulario de datos de envío
+- Aplicación de cupones
+- Creación de orden
+- Confirmación de compra
 
-### 2. Gestión de Imágenes
+### 4. **Gestión de Almacén**
+- Visualización de órdenes pendientes
+- Confirmación de órdenes
+- Marcado como listo para despacho
+- Despacho con registro de inventario
 
-**Almacenamiento en Base de Datos**: Las imágenes se almacenan como datos binarios en la base de datos en lugar de archivos en el sistema de archivos.
+## Seguridad
 
-**Ventajas**:
-- Consistencia de datos
-- Fácil backup y restauración
-- No hay problemas de sincronización entre archivos y base de datos
+### Medidas Implementadas
+- **CSRF Protection**: Habilitado por defecto
+- **Session Security**: Configuración segura de sesiones
+- **SQL Injection**: Protegido por el ORM de Django
+- **XSS Protection**: Configurado en middleware
+- **Validación de datos**: Formularios con validación completa
 
-**Desventajas**:
-- Mayor tamaño de base de datos
-- Posible impacto en rendimiento para imágenes grandes
-
-### 3. Sistema de Carrito
-
-**Basado en Sesiones**: El carrito se asocia con la sesión del usuario, permitiendo persistencia entre páginas.
-
-**Implementación**:
-- Cada sesión tiene un carrito asociado
-- Los items del carrito se almacenan en la base de datos
-- Soporte para productos con variantes
-
-### 4. Gestión de Inventario
-
-**Movimientos de Stock**: Sistema de auditoría completa que registra todos los movimientos de inventario.
-
-**Tipos de Movimientos**:
-- `in`: Entrada de stock
-- `out`: Salida de stock
-- `adjustment`: Ajuste manual de stock
-
-### 5. Sistema de Variantes
-
-**Productos con Opciones**: Los productos pueden tener múltiples variantes (color, tamaño, material, etc.).
-
-**Implementación**:
-- Modelo `ProductVariant` relacionado con `Product`
-- Cada variante puede tener su propio precio y stock
-- SKU único por variante
-
-### 6. Cupones de Descuento
-
-**Sistema Flexible**: Soporte para descuentos porcentuales y de monto fijo.
-
-**Características**:
-- Fechas de validez
-- Límites de uso
-- Montos mínimos de compra
-- Descuentos máximos
+### Variables Sensibles
+- **SECRET_KEY**: Debe ser única y secreta
+- **Database Credentials**: Usar variables de entorno
+- **Debug Mode**: Deshabilitar en producción
 
 ## Despliegue en Producción
 
 ### Configuración de Producción
-
 1. **Cambiar DEBUG a False**
 2. **Configurar SECRET_KEY segura**
 3. **Configurar ALLOWED_HOSTS**
@@ -277,7 +327,6 @@ ferreteria_ecommerce/
 5. **Configurar archivos estáticos**
 
 ### Comandos de Despliegue
-
 ```bash
 # Recolectar archivos estáticos
 python manage.py collectstatic
@@ -289,98 +338,11 @@ gunicorn ferreteria_ecommerce.wsgi:application
 python manage.py runserver 0.0.0.0:8000
 ```
 
-## Testing
-
-### Ejecutar Tests
-
-```bash
-# Tests de todas las aplicaciones
-python manage.py test
-
-# Tests de una aplicación específica
-python manage.py test catalog
-python manage.py test cart
-python manage.py test orders
-```
-
-## Comandos de Gestión Personalizados
-
-El proyecto incluye comandos de gestión personalizados para tareas administrativas:
-
-```bash
-# Comandos disponibles
-python manage.py help
-
-# Comandos específicos del proyecto
-python manage.py [nombre_del_comando]
-```
-
-## Seguridad
-
-### Consideraciones de Seguridad
-
-- **CSRF Protection**: Habilitado por defecto
-- **Session Security**: Configuración segura de sesiones
-- **SQL Injection**: Protegido por el ORM de Django
-- **XSS Protection**: Configurado en middleware
-
-### Variables Sensibles
-
-- **SECRET_KEY**: Debe ser única y secreta
-- **Database Credentials**: Usar variables de entorno
-- **Debug Mode**: Deshabilitar en producción
-
-## Monitoreo y Logs
-
-### Logs de Django
-
-Los logs se configuran en `settings.py` y pueden incluir:
-- Errores de aplicación
-- Accesos a la base de datos
-- Operaciones de seguridad
-
-### Métricas Recomendadas
-
-- Tiempo de respuesta de páginas
-- Uso de base de datos
-- Errores 4xx y 5xx
-- Uso de memoria y CPU
-
-## Contribución
-
-### Estándares de Código
-
-- Seguir PEP 8 para Python
-- Usar nombres descriptivos para variables y funciones
-- Documentar funciones complejas
-- Mantener consistencia en el estilo
-
-### Flujo de Trabajo
-
-1. Crear rama para nueva funcionalidad
-2. Implementar cambios
-3. Ejecutar tests
-4. Crear pull request
-5. Revisión de código
-
-## Soporte
-
-### Contacto
-
-Para soporte técnico o preguntas sobre el proyecto:
-- Crear un issue en el repositorio
-- Documentar el problema con detalles
-- Incluir logs y pasos para reproducir
-
-### Recursos Adicionales
+## Recursos Adicionales
 
 - [Documentación de Django](https://docs.djangoproject.com/)
 - [PostgreSQL Documentation](https://www.postgresql.org/docs/)
 - [Django Admin Documentation](https://docs.djangoproject.com/en/stable/ref/contrib/admin/)
-
-## Licencia
-
-Este proyecto está bajo la licencia [especificar licencia].
 
 ---
 
